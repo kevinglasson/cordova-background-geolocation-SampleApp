@@ -1,18 +1,30 @@
-import {
-  Platform,
-  Events
-} from 'ionic-angular';
+import {Events, Platform} from 'ionic-angular';
 import {Injectable} from "@angular/core";
 
-import { Device } from '@ionic-native/device';
+import {Device} from '@ionic-native/device';
 
-import { defaultLocationUrl, companyToken } from '../consoleConfig';
+import {companyToken, defaultLocationUrl} from '../consoleConfig';
 
 /**
 * The collection of available BackgroundGeolocation settings
 */
 const SETTINGS = {
   common: [
+    // Details
+    {
+      name: 'firstName',
+      group: 'details',
+      inputType: 'text',
+      dataType: 'string',
+      defaultValue: 'First Name'
+    },
+    {
+      name: 'lastName',
+      group: 'details',
+      inputType: 'text',
+      dataType: 'string',
+      defaultValue: 'Last Name'
+    },
     // Geolocation
     {name: 'desiredAccuracy', group: 'geolocation', dataType: 'integer', inputType: 'select', values: [-1, 0, 10, 100, 1000], defaultValue: 0 },
     {name: 'distanceFilter', group: 'geolocation', dataType: 'integer', inputType: 'select', values: [0, 10, 50, 100, 1000], defaultValue: 20 },

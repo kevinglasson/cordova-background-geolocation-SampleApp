@@ -1,10 +1,15 @@
 import {
-  Events,
   AlertController,
-  ToastController,
-  LoadingController
+  Events,
+  LoadingController,
+  ToastController
 } from 'ionic-angular';
 import {Injectable} from "@angular/core";
+// KEVIN
+import {Headers, Http, RequestOptions} from '@angular/http';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/toPromise';
+// END KEVIN
 
 const SETTINGS = [
 
@@ -27,16 +32,17 @@ const GEOFENCE_LOITERING_DELAY_OPTIONS = [1*1000, 10*1000, 30*1000, 60*1000, 5*6
 export class SettingsService {
 
   public state:any;
-  private myState:any;
-  private storage:any;
   public geofenceRadiusOptions: any;
   public geofenceLoiteringDelayOptions: any;
+  private myState: any;
+  private storage: any;
 
   constructor(
     private events:Events,
     private alertCtrl: AlertController,
     private toastCtrl: ToastController,
-    private loadingCtrl: LoadingController
+    private loadingCtrl: LoadingController,
+    private http: Http
   ) {
     this.storage = (<any>window).localStorage;
 
@@ -114,6 +120,19 @@ export class SettingsService {
     });
     alert.present();
   }
+
+  // KEVIN
+  post(data, url) {
+    let headers = new Headers;
+    headers.append('Content-Type', 'application/json');
+    headers.append('Accept', 'application/json');
+
+    let options = new RequestOptions({headers: headers});
+
+    return this.http.post(url, data, options)
+  }
+
+  // END KEVIN
 
   /**
   * Subscribe to BGService events

@@ -1,9 +1,9 @@
-import { Component, NgZone } from '@angular/core';
+import {Component, NgZone} from '@angular/core';
 import {
   AlertController,
+  LoadingController,
   ModalController,
-  ViewController,
-  LoadingController
+  ViewController
 } from "ionic-angular";
 
 import {BGService} from '../../lib/BGService';
@@ -45,20 +45,28 @@ export class SettingsPage {
   //geofenceOptions: any;
   //mapOptions: any;
   email: string;
+
+
+  // KEVIN - me again ^_^
+  firstName: string;
+  lastName: string;
+  uuid: string;
+  // END KEVIN
+
+
   isSyncing: boolean;
   isEmailingLog: boolean;
   isDestroyingLog: boolean;
   isAddingGeofences: boolean;
   isResettingOdometer: boolean;
 
-  constructor(
-    private bgService: BGService,
-    private settingsService: SettingsService,
-    private alertCtrl: AlertController,
-    private viewCtrl: ViewController,
-    private modalCtrl: ModalController,
-    private loadingCtrl: LoadingController,
-    private zone: NgZone) {
+  constructor(private bgService: BGService,
+              private settingsService: SettingsService,
+              private alertCtrl: AlertController,
+              private viewCtrl: ViewController,
+              private modalCtrl: ModalController,
+              private loadingCtrl: LoadingController,
+              private zone: NgZone) {
 
     this.isLoaded = false;
     this.loader = this.loadingCtrl.create({
@@ -97,10 +105,29 @@ export class SettingsPage {
     // Load email address for email log
     let storage = (<any>window).localStorage;
     var email = storage.getItem('settings:email');
+
+
+    // KEVIN
+    var firstName = storage.getItem('settings:firstName');
+    var lastName = storage.getItem('settings:lastName');
+
+    if (email) {
+      this.email = email;
+    }
+    if (firstName) {
+      this.firstName = firstName;
+    }
+    if (lastName) {
+      this.lastName = lastName;
+    }
+    // END KEVIN
+
+
     if (email) {
       this.email = email;
     }
   }
+
   ionViewWillEnter() {
     if (!this.isLoaded) {
       this.loader.present();
@@ -111,6 +138,7 @@ export class SettingsPage {
     this.bgService.playSound("CLOSE");
     this.viewCtrl.dismiss();
   }
+
   onClickAbout() {
     this.modalCtrl.create(AboutPage).present();
   }
@@ -162,8 +190,11 @@ export class SettingsPage {
     this.isResettingOdometer = true;
 
     function onComplete() {
-      this.zone.run(() => { this.isResettingOdometer = false;});
+      this.zone.run(() => {
+        this.isResettingOdometer = false;
+      });
     }
+
     bgGeo.resetOdometer((location) => {
       onComplete.call(this);
     }, (error) => {
@@ -183,7 +214,9 @@ export class SettingsPage {
     var bgGeo = this.bgService.getPlugin();
 
     function onComplete() {
-      this.zone.run(() => { this.isSyncing = false; });
+      this.zone.run(() => {
+        this.isSyncing = false;
+      });
     };
 
     bgGeo.sync((rs, taskId) => {
@@ -203,6 +236,53 @@ export class SettingsPage {
     storage.setItem('settings:email', this.email);
   }
 
+
+  // KEVIN - Trying here... BOOM
+  onUpdateFirstName() {
+    this.bgService.playSound('BUTTON_CLICK');
+    let storage = (<any>window).localStorage;
+    storage.setItem('settings:firstName', this.firstName);
+    console.log('Stored: ' + this.firstName)
+  }
+
+  onUpdateLastName() {
+    this.bgService.playSound('BUTTON_CLICK');
+    let storage = (<any>window).localStorage;
+    storage.setItem('settings:lastName', this.lastName);
+    console.log('Stored: ' + this.lastName)
+  }
+
+  onClickPostName() {
+    if (!this.uuid) {
+      let storage = (<any>window).localStorage;
+      this.uuid = storage.getItem('device:uuid');
+    }
+
+    let data = {
+      firstName: this.firstName,
+      lastName: this.lastName,
+      uuid: this.uuid,
+    };
+
+    console.log('Posting', data);
+
+    this.settingsService.post(data, this.state.url)
+      .subscribe(function (response) {
+          console.log("Success Response" + response
+          )
+        },
+        function (error) {
+          console.log("Error happened" + error
+          )
+        },
+        function () {
+          console.log("the subscription is completed")
+        });
+  }
+
+  // END KEVIN
+
+
   onClickEmailLog() {
     this.bgService.playSound('BUTTON_CLICK');
 
@@ -214,7 +294,9 @@ export class SettingsPage {
     this.isEmailingLog = true;
 
     function onComplete() {
-      this.zone.run(() => { this.isEmailingLog = false; });
+      this.zone.run(() => {
+        this.isEmailingLog = false;
+      });
     }
 
     this.bgService.getPlugin().emailLog(this.email, () => {
@@ -250,14 +332,14 @@ export class SettingsPage {
     this.bgService.playSound('BUTTON_CLICK');
     this.isAddingGeofences = true;
 
-    var bgGeo     = this.bgService.getPlugin();
-    var data      = this.bgService.getCityDriveData();
+    var bgGeo = this.bgService.getPlugin();
+    var data = this.bgService.getCityDriveData();
     var geofences = [], latlng;
 
-    for (var n=0,len=data.length;n<len;n++) {
+    for (var n = 0, len = data.length; n < len; n++) {
       latlng = data[n];
       geofences.push({
-        identifier: 'city_drive_' + (n+1),
+        identifier: 'city_drive_' + (n + 1),
         latitude: parseFloat(latlng.lat),
         longitude: parseFloat(latlng.lng),
         radius: this.settingsService.state.geofenceRadius,
@@ -270,7 +352,9 @@ export class SettingsPage {
     }
 
     function onComplete() {
-      this.zone.run(() => { this.isAddingGeofences = false; })
+      this.zone.run(() => {
+        this.isAddingGeofences = false;
+      })
     };
 
     bgGeo.addGeofences(geofences, () => {
@@ -292,7 +376,7 @@ export class SettingsPage {
   }
 
   decodeNotficationPriority(value) {
-    switch(value) {
+    switch (value) {
       case 0:
         value = 'DEFAULT';
         break;
@@ -315,7 +399,7 @@ export class SettingsPage {
   }
 
   encodeNotficationPriority(value) {
-    switch(value) {
+    switch (value) {
       case 'DEFAULT':
         value = 0;
         break;
@@ -336,7 +420,7 @@ export class SettingsPage {
   }
 
   decodeLogLevel(value) {
-    switch(value) {
+    switch (value) {
       case 0:
         value = 'OFF';
         break;
@@ -358,8 +442,9 @@ export class SettingsPage {
     }
     return value;
   }
+
   encodeLogLevel(value) {
-    switch(value) {
+    switch (value) {
       case 'OFF':
         value = 0;
         break;
@@ -382,9 +467,11 @@ export class SettingsPage {
     }
     return value;
   }
+
   decodeTriggerActivities(value) {
     return value.split(',');
   }
+
   encodeTriggerActivities(value) {
     return value.join(',');
   }
