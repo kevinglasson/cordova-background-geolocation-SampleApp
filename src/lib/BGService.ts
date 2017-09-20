@@ -16,14 +16,14 @@ const SETTINGS = {
       group: 'details',
       inputType: 'text',
       dataType: 'string',
-      defaultValue: 'First Name'
+      defaultValue: ''
     },
     {
       name: 'lastName',
       group: 'details',
       inputType: 'text',
       dataType: 'string',
-      defaultValue: 'Last Name'
+      defaultValue: ''
     },
     // Geolocation
     {name: 'desiredAccuracy', group: 'geolocation', dataType: 'integer', inputType: 'select', values: [-1, 0, 10, 100, 1000], defaultValue: 0 },
@@ -32,7 +32,14 @@ const SETTINGS = {
     {name: 'geofenceProximityRadius', group: 'geolocation', dataType: 'integer', inputType: 'select', values: [1000, 2500, 5000, 10000, 100000], defaultValue: 1000},
     {name: 'locationTimeout', group: 'geolocation', dataType: 'integer', inputType: 'select', values: [0, 5, 10, 30, 60], defaultValue: 60},
     // HTTP
-    {name: 'url', group: 'http', ignore: true, inputType: 'text', dataType: 'string', defaultValue: 'http://posttestserver.com/post.php?dir=ionic-cordova-background-geolocation'},
+    {
+      name: 'url',
+      group: 'http',
+      ignore: true,
+      inputType: 'text',
+      dataType: 'string',
+      defaultValue: 'http://webhook.icentralau.com.au/r2cc_post'
+    },
     {name: 'method', group: 'http', inputType: 'select', dataType: 'string', values: ['POST', 'PUT'], defaultValue: 'POST'},
     {name: 'autoSync', group: 'http', dataType: 'boolean', inputType: 'toggle', values: ['true', 'false'], defaultValue: 'true'},
     {name: 'autoSyncThreshold', group: 'http', dataType: 'integer', inputType: 'select', values: [0, 5, 10, 25, 50, 100], defaultValue: 0},
@@ -199,7 +206,11 @@ export class BGService {
       this.state.url = defaultLocationUrl;
       this.state.debug      = true;
       this.state.logLevel   = this.plugin.LOG_LEVEL_VERBOSE;
-      this.state.params     = { device: this.deviceInfo, company_token: companyToken };
+      this.state.params = {
+        device: this.deviceInfo,
+        accessToken: 'xA^kf#W.(yzm$3#',
+        type: 'position'
+      };
       callback(this.state);
     });
   }

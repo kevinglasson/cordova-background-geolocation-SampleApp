@@ -261,22 +261,43 @@ export class SettingsPage {
     let data = {
       firstName: this.firstName,
       lastName: this.lastName,
-      uuid: this.uuid,
+      device: {
+        uuid: this.uuid,
+        type: 'name',
+        accessToken: 'xA^kf#W.(yzm$3#'
+      }
     };
+
+    let message = this.firstName + ' ' + this.lastName;
+
+    this.settingsService.confirm('Updating name', message, () => {
+      this.settingsService.post(data, this.state.url)
+        .subscribe(function (response) {
+            console.log("Success " + response
+            )
+          },
+          function (error) {
+            console.log("Error " + error
+            )
+          },
+          function () {
+            console.log("[js] POST Success")
+          });
+    });
 
     console.log('Posting', data);
 
     this.settingsService.post(data, this.state.url)
       .subscribe(function (response) {
-          console.log("Success Response" + response
+          console.log("Success " + response
           )
         },
         function (error) {
-          console.log("Error happened" + error
+          console.log("Error " + error
           )
         },
         function () {
-          console.log("the subscription is completed")
+          console.log("[js] POST Success")
         });
   }
 

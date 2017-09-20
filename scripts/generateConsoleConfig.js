@@ -7,12 +7,12 @@ if (!fs.existsSync(consoleConfigPath)) {
   const ifaces = require('os').networkInterfaces();
   const macAddress = _.find(_.flatten(_.values(ifaces)), { address : ipAddress}).mac;
   const md5 = require('md5');
-  const companyToken = md5(macAddress).substring(0, 8);
+  const accessToken = md5(macAddress).substring(0, 8);
   const generatedContent = `
 // generated automatically, but feel free to change
 // and remove from a gitignore file
 exports.defaultLocationUrl = 'http://tracker.transistorsoft.com/locations';
-exports.companyToken = '${companyToken}';
+exports.accessToken = '${accessToken}';
   `;
   fs.writeFileSync(consoleConfigPath, generatedContent, 'utf-8');
 }

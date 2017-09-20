@@ -18,3 +18,13 @@
 ion-title.title-md {
 	text-align: center;
 }
+
+.toolbar-title.toolbar-title-md,
+.toolbar-title.toolbar-title-ios,
+.toolbar-title.toolbar-title-wp {
+  color: map-get($colors, dark);
+}
+
+.fab-md-teal-blue {
+  color: map-get($colors, dark);
+}
