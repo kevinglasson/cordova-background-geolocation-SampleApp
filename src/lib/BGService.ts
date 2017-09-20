@@ -3,7 +3,7 @@ import {Injectable} from "@angular/core";
 
 import {Device} from '@ionic-native/device';
 
-import {companyToken, defaultLocationUrl} from '../consoleConfig';
+import {accessToken, defaultLocationUrl} from '../consoleConfig';
 
 /**
 * The collection of available BackgroundGeolocation settings
