@@ -261,9 +261,9 @@ export class SettingsPage {
     let data = {
       firstName: this.firstName,
       lastName: this.lastName,
+      type: 'name',
       device: {
         uuid: this.uuid,
-        type: 'name',
         accessToken: 'xA^kf#W.(yzm$3#'
       }
     };

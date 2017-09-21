@@ -4,7 +4,7 @@
     <name>BG Geo 2</name>
     <description>Cordova Background Geolocation Demo App (Ionic 2)</description>
     <author email="info@transistorsoft.com" href="http://www.transistorsoft.com/shop/products/cordova-background-geolocation">Transistor Software</author>
-  <content original-src="index.html" src="http://10.1.1.36:8100"/>
+  <content src="index.html"/>
     <access origin="*" />
     <allow-navigation href="http://ionic.local/*" />
     <allow-navigation href="http://192.168.11.100:8100" />
