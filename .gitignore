@@ -23,7 +23,6 @@ tmp/
 temp/
 hooks/
 platforms/
-plugins/
 plugins/android.json
 plugins/ios.json
 www/
@@ -32,4 +31,12 @@ $RECYCLE.BIN/
 .DS_Store
 Thumbs.db
 UserInterfaceState.xcuserstate
-!/plugins/cordova-background-geolocation-lt/docs/
+
+/plugins/cordova-plugin-background-fetch/
+/plugins/cordova-plugin-whitelist/
+/plugins/fetch.json
+/plugins/cordova-plugin-device/
+/plugins/android.json
+/plugins/cordova-plugin-splashscreen/
+/plugins/ionic-plugin-keyboard/
+/plugins/cordova-plugin-statusbar/
