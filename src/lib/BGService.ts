@@ -53,7 +53,14 @@ const SETTINGS = {
     {name: 'activityRecognitionInterval', group: 'activity_recognition', dataType: 'integer', inputType: 'select', values: [0, 1000, 10000, 30000, 60000], defaultValue: 10000},
     {name: 'heartbeatInterval', group: 'application', dataType: 'integer', inputType: 'select', values: [-1, 60, (2*60), (5*60), (15*60)], defaultValue: 60},
     // Logging & Debug
-    {name: 'debug', group: 'debug', dataType: 'boolean', inputType: 'toggle', values: ['true', 'false'], defaultValue: 'true'},
+    {
+      name: 'debug',
+      group: 'debug',
+      dataType: 'boolean',
+      inputType: 'toggle',
+      values: ['true', 'false'],
+      defaultValue: 'false'
+    },
     {name: 'logLevel', group: 'debug', dataType: 'integer', inputType: 'select', values: [0, 1, 2, 3, 4, 5], defaultValue: 5},
     {name: 'logMaxDays', group: 'debug', dataType: 'integer', inputType: 'select', values: [0, 1, 2, 3, 4, 5, 6, 7], defaultValue: 5}
   ],
@@ -70,7 +77,14 @@ const SETTINGS = {
   ],
   Android: [
     // Geolocation
-    {name: 'locationUpdateInterval', group: 'geolocation', dataType: 'integer', inputType: 'select', values: [0, 1000, 5000, 10000, 30000, 60000], defaultValue: 5000},
+    {
+      name: 'locationUpdateInterval',
+      group: 'geolocation',
+      dataType: 'integer',
+      inputType: 'select',
+      values: [0, 1000, 5000, 10000, 30000, 60000],
+      defaultValue: 8000
+    },
     {name: 'fastestLocationUpdateInterval', group: 'geolocation', dataType: 'integer', inputType: 'select', values: [0, 1000, 5000, 10000, 30000, 60000], defaultValue: 1000},
     {name: 'deferTime', group: 'geolocation', dataType: 'integer', inputType: 'select', values: [0, 10*1000, 30*1000, 60*1000, 10*60*1000], defaultValue: 0},
     // Activity Recognition

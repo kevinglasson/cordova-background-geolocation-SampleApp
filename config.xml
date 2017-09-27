@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="com.transistorsoft.backgroundgeolocation.ionic2" version="2.8.0"
         xmlns="http://www.w3.org/ns/widgets">
-    <name>BG Geo 2</name>
-    <description>Cordova Background Geolocation Demo App (Ionic 2)</description>
+  <name>R2CC</name>
+  <description>Location Tracking App</description>
     <author email="info@transistorsoft.com" href="http://www.transistorsoft.com/shop/products/cordova-background-geolocation">Transistor Software</author>
   <content src="index.html"/>
     <access origin="*" />

@@ -1,15 +1,10 @@
-import {
-  Component,
-  ViewChild,
-  ElementRef,
-  NgZone
-} from '@angular/core';
+import {Component, ElementRef, NgZone, ViewChild} from '@angular/core';
 
 import {
-  NavController,
-  Platform,
+  LoadingController,
   ModalController,
-  LoadingController
+  NavController,
+  Platform
 } from 'ionic-angular';
 
 import {SettingsPage} from '../settings/settings';
@@ -33,7 +28,7 @@ const COLORS = {
   red: "#FE381E",
   dark_red: "#A71300",
   black: "#000"
-}
+};
 // Icons
 const ICON_MAP = {
   activity_unknown: "help-circle",
@@ -73,24 +68,24 @@ export class HomePage {
   @ViewChild('map') mapElement: ElementRef;
 
   /**
-  * @property {google.Map} Reference to Google Map instance
-  */
+   * @property {google.Map} Reference to Google Map instance
+   */
   map: any;
   /**
-  * @property {Object} state
-  */
+   * @property {Object} state
+   */
   state: any;
   /**
-  * @property {BackgroundGeolocation} Reference to actual BackgroundGeolocation plugin
-  */
+   * @property {BackgroundGeolocation} Reference to actual BackgroundGeolocation plugin
+   */
   bgGeo: any;
   /**
-  * @property {Object} lastLocation
-  */
+   * @property {Object} lastLocation
+   */
   lastLocation: any;
   /**
-  * @property {Object} map of icons
-  */
+   * @property {Object} map of icons
+   */
   iconMap: any;
 
   currentLocationMarker: any;
@@ -113,16 +108,15 @@ export class HomePage {
   isResettingOdometer: boolean;
   isMapMenuOpen: boolean;
 
-  constructor(
-    private navCtrl: NavController,
-    private platform: Platform,
-    private bgService:BGService,
-    private settingsService:SettingsService,
-    private zone:NgZone,
-    private loadingCtrl: LoadingController,
-    private modalController: ModalController) {
+  constructor(private navCtrl: NavController,
+              private platform: Platform,
+              private bgService:BGService,
+              private settingsService:SettingsService,
+              private zone:NgZone,
+              private loadingCtrl: LoadingController,
+              private modalController: ModalController) {
 
-    this.bgService.on('change', this.onBackgroundGeolocationSettingsChanged.bind(this));    
+    this.bgService.on('change', this.onBackgroundGeolocationSettingsChanged.bind(this));
     this.bgService.on('start', this.onBackgroundGeolocationStarted.bind(this));
 
     this.settingsService.on('change', this.onSettingsChanged.bind(this));
@@ -163,8 +157,8 @@ export class HomePage {
   }
 
   /**
-  * Configure Google Maps
-  */
+   * Configure Google Maps
+   */
   configureMap(){
     this.locationMarkers = [];
     this.geofenceMarkers = [];
@@ -267,8 +261,8 @@ export class HomePage {
   }
 
   /**
-  * Configure BackgroundGeolocation plugin
-  */
+   * Configure BackgroundGeolocation plugin
+   */
   configureBackgroundGeolocation() {
     var bgGeo = this.bgService.getPlugin();
 
@@ -294,7 +288,7 @@ export class HomePage {
     bgGeo.on('geofenceschange', this.onGeofencesChange);
     bgGeo.on('schedule', this.onSchedule);
     bgGeo.on('http', this.onHttpSuccess, this.onHttpFailure);
-    
+
     // Fetch current settings from BGService
     this.bgService.getState((config) => {
       config.schedule = [];
@@ -328,6 +322,7 @@ export class HomePage {
       this.bgService.playSound('CLOSE');
     }
   }
+
   onClickSettings() {
     //this.navCtrl.push(SettingsPage);
     this.bgService.playSound('OPEN');
@@ -427,9 +422,9 @@ export class HomePage {
   }
 
   onSelectMapOption(name) {
-     this.bgService.playSound('BUTTON_CLICK');
-     this.settingsService.state[name] = !this.settingsService.state[name];
-     this.settingsService.set(name, this.settingsService.state[name]);
+    this.bgService.playSound('BUTTON_CLICK');
+    this.settingsService.state[name] = !this.settingsService.state[name];
+    this.settingsService.set(name, this.settingsService.state[name]);
   }
 
   onToggleEnabled() {
@@ -442,7 +437,7 @@ export class HomePage {
           console.warn('[js] START SUCCESS');
         }, function(error) {
           console.error('[js] START FAILURE: ', error);
-        });        
+        });
       } else {
         bgGeo.startGeofences();
       }
@@ -474,9 +469,11 @@ export class HomePage {
     if (!this.state.enabled) {
       return;
     }
+
     function onComplete() {
       this.zone.run(() => { this.isChangingPace = false; })
     }
+
     this.bgService.playSound('BUTTON_CLICK');
     let bgGeo = this.bgService.getPlugin();
 
@@ -568,6 +565,7 @@ export class HomePage {
       this.state.isMoving = state.isMoving;
     });
   }
+
   ////
   // Background Geolocation event-listeners
   //
@@ -587,7 +585,7 @@ export class HomePage {
   onLocationError(error:any) {
     console.warn('[js] location error: ', error);
   }
-  
+
   onMotionChange(isMoving:boolean, location:any, taskId:any) {
     console.log('[js] motionchange: ', isMoving, location);
     let bgGeo = this.bgService.getPlugin();
@@ -692,7 +690,7 @@ export class HomePage {
         events: []
       };
       this.geofenceHits[event.identifier] = geofence;
-      this.geofenceHitMarkers.push(geofence.circle);      
+      this.geofenceHitMarkers.push(geofence.circle);
     }
 
     var color;
@@ -797,7 +795,7 @@ export class HomePage {
     }
     if (this.lastLocation) {
       this.locationMarkers.push(this.buildLocationMarker(location));
-    }    
+    }
     // Add breadcrumb to current Polyline path.
     this.polyline.getPath().push(latlng);
     if (!this.settingsService.state.mapHidePolyline) {
