@@ -27,20 +27,22 @@ const SETTINGS = {
     },
     // Geolocation
     {
+      // 0 is highest power highest accuracy, 1000 is lowest
       name: 'desiredAccuracy',
       group: 'geolocation',
       dataType: 'integer',
       inputType: 'select',
       values: [-1, 0, 10, 100, 1000],
-      defaultValue: 0
+      defaultValue: 10
     },
     {
+      // Must be 0 for locationUpdateInterval to work
       name: 'distanceFilter',
       group: 'geolocation',
       dataType: 'integer',
       inputType: 'select',
       values: [0, 10, 50, 100, 1000],
-      defaultValue: 20
+      defaultValue: 0
     },
     {
       name: 'disableElasticity',
@@ -119,7 +121,7 @@ const SETTINGS = {
       group: 'http',
       dataType: 'integer',
       inputType: 'select',
-      values: [-1, 0, 1, 5, 10]
+      values: [-1, 0, 1, 5, 10],
     },
     // Application
     {
@@ -147,12 +149,14 @@ const SETTINGS = {
       defaultValue: 1
     },
     {
+      // Setting the default so that it doesn't do recognition
+      // Might stuff some other things up though???
       name: 'activityRecognitionInterval',
       group: 'activity_recognition',
       dataType: 'integer',
       inputType: 'select',
       values: [0, 1000, 10000, 30000, 60000],
-      defaultValue: 10000
+      defaultValue: 999999999
     },
     {
       name: 'heartbeatInterval',
@@ -256,7 +260,7 @@ const SETTINGS = {
       dataType: 'integer',
       inputType: 'select',
       values: [0, 1000, 5000, 10000, 30000, 60000],
-      defaultValue: 8000
+      defaultValue: 30000
     },
     {
       name: 'fastestLocationUpdateInterval',
@@ -264,7 +268,7 @@ const SETTINGS = {
       dataType: 'integer',
       inputType: 'select',
       values: [0, 1000, 5000, 10000, 30000, 60000],
-      defaultValue: 1000
+      defaultValue: 10000
     },
     {
       name: 'deferTime',
@@ -272,7 +276,7 @@ const SETTINGS = {
       dataType: 'integer',
       inputType: 'select',
       values: [0, 10 * 1000, 30 * 1000, 60 * 1000, 10 * 60 * 1000],
-      defaultValue: 0
+      defaultValue: 10000
     },
     // Activity Recognition
     {
@@ -282,7 +286,7 @@ const SETTINGS = {
       inputType: 'select',
       multiple: true,
       values: ['in_vehicle', 'on_bicycle', 'on_foot', 'running', 'walking'],
-      defaultValue: 'in_vehicle, on_bicycle, running, walking, on_foot'
+      defaultValue: 'on_bicycle'
     },
     // Application
     {
@@ -419,7 +423,7 @@ export class BGService {
       this.storage.setItem('device:uuid', this.uuid);
 
       // Override a few defaults on first-boot so user can hear debug sounds.
-      this.state.foregroundService = true;
+      this.state.foregroundService = false;
       this.state.autoSync = true;
       this.state.heartbeatInterval = 60;
       this.state.stopOnTerminate = false;

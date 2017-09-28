@@ -8,10 +8,9 @@ import {
 } from 'ionic-angular';
 
 import {SettingsPage} from '../settings/settings';
-import {GeofencePage} from '../geofence/geofence';
 import {BGService} from '../../lib/BGService';
 import {SettingsService} from '../../lib/SettingsService';
-import {LongPress} from '../../lib/LongPress';
+import {AboutPage} from '../about/about';
 
 declare var google;
 
@@ -179,15 +178,6 @@ export class HomePage {
       disableDefaultUI: true
     };
     this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
-    // Create LongPress event-handler
-    new LongPress(this.map, 500);
-
-    // Tap&hold detected.  Play a sound a draw a circular cursor.
-    google.maps.event.addListener(this.map, 'longpresshold', this.onLongPressStart.bind(this));
-    // Longpress cancelled.  Get rid of the circle cursor.
-    google.maps.event.addListener(this.map, 'longpresscancel', this.onLongPressCancel.bind(this));
-    // Longpress initiated, add the geofence
-    google.maps.event.addListener(this.map, 'longpress', this.onLongPress.bind(this));
 
     // Blue current location marker
     this.currentLocationMarker = new google.maps.Marker({
@@ -223,7 +213,6 @@ export class HomePage {
       map: this.map
     });
     // Route polyline
-    // Route polyline
     let seq = {
       repeat: '30px',
       icon: {
@@ -244,20 +233,6 @@ export class HomePage {
       strokeWeight: 7,
       icons: [seq]
     });
-    // Popup geofence cursor for adding geofences via LongPress
-    this.geofenceCursor = new google.maps.Marker({
-      clickable: false,
-      zIndex: 100,
-      icon: {
-        path: google.maps.SymbolPath.CIRCLE,
-        scale: 100,
-        fillColor: COLORS.green,
-        fillOpacity: 0.2,
-        strokeColor: COLORS.green,
-        strokeWeight: 1,
-        strokeOpacity: 0.7
-      }
-    });
   }
 
   /**
@@ -271,10 +246,8 @@ export class HomePage {
     this.onLocationError = this.onLocationError.bind(this);
     this.onMotionChange = this.onMotionChange.bind(this);
     this.onHeartbeat = this.onHeartbeat.bind(this);
-    this.onGeofence = this.onGeofence.bind(this);
     this.onActivityChange = this.onActivityChange.bind(this);
     this.onProviderChange = this.onProviderChange.bind(this);
-    this.onGeofencesChange = this.onGeofencesChange.bind(this);
     this.onSchedule = this.onSchedule.bind(this);
     this.onHttpSuccess = this.onHttpSuccess.bind(this);
     this.onHttpFailure = this.onHttpFailure.bind(this);
@@ -282,10 +255,8 @@ export class HomePage {
     bgGeo.on('location', this.onLocation, this.onLocationError);
     bgGeo.on('motionchange', this.onMotionChange);
     bgGeo.on('heartbeat', this.onHeartbeat);
-    bgGeo.on('geofence', this.onGeofence);
     bgGeo.on('activitychange', this.onActivityChange);
     bgGeo.on('providerchange', this.onProviderChange);
-    bgGeo.on('geofenceschange', this.onGeofencesChange);
     bgGeo.on('schedule', this.onSchedule);
     bgGeo.on('http', this.onHttpSuccess, this.onHttpFailure);
 
@@ -327,6 +298,12 @@ export class HomePage {
     //this.navCtrl.push(SettingsPage);
     this.bgService.playSound('OPEN');
     let modal = this.modalController.create(SettingsPage, {});
+    modal.present();
+  }
+
+  onClickAbout() {
+    this.bgService.playSound('OPEN');
+    let modal = this.modalController.create(AboutPage, {});
     modal.present();
   }
 
@@ -382,20 +359,6 @@ export class HomePage {
     });
   }
 
-  onClickEmailLogs() {
-    this.bgService.playSound('BUTTON_CLICK');
-    let storage = (<any>window).localStorage;
-    var email = storage.getItem('settings:email');
-    if (!email) {
-      this.settingsService.toast('Please enter an email address in the Settings screen');
-      return;
-    }
-    var bgGeo = this.bgService.getPlugin();
-    bgGeo.emailLog(email, () => {
-      bgGeo.destroyLog();
-    });
-  }
-
   onClickResetOdometer() {
     this.state.odometer = '0.0';
     this.bgService.playSound('BUTTON_CLICK');
@@ -406,25 +369,13 @@ export class HomePage {
     function onComplete(message, result?) {
       this.settingsService.toast(message, result);
       this.zone.run(() => { this.isResettingOdometer = false; })
-    };
+    }
 
     bgGeo.resetOdometer((location) => {
       onComplete.call(this, MESSAGE.reset_odometer_success);
     }, (error) => {
       onComplete.call(this, MESSAGE.reset_odometer_failure, error);
     });
-  }
-
-  onClickMapMenu() {
-    this.isMapMenuOpen = !this.isMapMenuOpen;
-    let soundId = (this.isMapMenuOpen) ? 'OPEN' : 'CLOSE';
-    this.bgService.playSound(soundId);
-  }
-
-  onSelectMapOption(name) {
-    this.bgService.playSound('BUTTON_CLICK');
-    this.settingsService.state[name] = !this.settingsService.state[name];
-    this.settingsService.set(name, this.settingsService.state[name]);
   }
 
   onToggleEnabled() {
@@ -486,30 +437,6 @@ export class HomePage {
       onComplete.call(this);
       alert('Failed to changePace');
     });
-  }
-
-  ////
-  // Map events
-  //
-  onLongPressStart(e) {
-    this.bgService.playSound('LONG_PRESS_ACTIVATE');
-    this.geofenceCursor.setPosition(e.latLng);
-    this.geofenceCursor.setMap(this.map);
-  }
-
-  onLongPressCancel(e) {
-    this.bgService.playSound('LONG_PRESS_CANCEL');
-    this.geofenceCursor.setMap(null);
-  }
-
-  onLongPress(e) {
-    var latlng = e.latLng;
-    this.geofenceCursor.setMap(null);
-    let modal = this.modalController.create(GeofencePage, {
-      latitude: latlng.lat(),
-      longitude: latlng.lng()
-    });
-    modal.present();
   }
 
   ////
@@ -620,151 +547,6 @@ export class HomePage {
 
   }
 
-  onGeofencesChange(event:any) {
-    console.log('[js] geofenceschange: ', event);
-
-    // All geofences off
-    if (!event.on.length && !event.off.length) {
-      this.geofenceMarkers.forEach((circle) => {
-        circle.setMap(null);
-      });
-      this.geofenceMarkers = [];
-      return;
-    }
-
-    // Filter out all "off" geofences.
-    this.geofenceMarkers = this.geofenceMarkers.filter((circle) => {
-      if (event.off.indexOf(circle.identifier) < 0) {
-        return true;
-      } else {
-        circle.setMap(null);
-        return false;
-      }
-    });
-
-    // Add new "on" geofences.
-    event.on.forEach((geofence) => {
-      var circle = this.geofenceMarkers.find((marker) => { return marker.identifier === geofence.identifier;});
-      // Already added?
-      if (circle) { return; }
-      this.geofenceMarkers.push(this.buildGeofenceMarker(geofence));
-    });
-
-  }
-
-  onGeofence(event:any) {
-    console.log('[js] geofence: ', event);
-
-    // DEBUG:
-    // Stop tracking on ENTER
-    // Start tracking on EXIT
-    /*
-    if (event.action === 'EXIT') {
-      this.bgService.getPlugin().start();
-    } else if (event.action === 'ENTER') {
-      this.bgService.getPlugin().startGeofences();
-    }
-    */
-
-    var circle = this.geofenceMarkers.find((marker) => {
-      return marker.identifier === event.identifier;
-    });
-
-    if (!circle) { return; }
-    var map = (this.settingsService.state.mapShowGeofenceHits) ? this.map : null;
-
-    let location = event.location;
-    let geofence = this.geofenceHits[event.identifier];
-    if (!geofence) {
-      geofence = {
-        circle: new google.maps.Circle({
-          zIndex: 100,
-          fillOpacity: 0,
-          strokeColor: COLORS.black,
-          strokeWeight: 1,
-          strokeOpacity: 1,
-          radius: circle.getRadius()+1,
-          center: circle.getCenter(),
-          map: map
-        }),
-        events: []
-      };
-      this.geofenceHits[event.identifier] = geofence;
-      this.geofenceHitMarkers.push(geofence.circle);
-    }
-
-    var color;
-    if (event.action === 'ENTER') {
-      color = COLORS.green;
-    } else if (event.action === 'DWELL') {
-      color = COLORS.gold;
-    } else {
-      color = COLORS.red;
-    }
-
-    let circleLatLng = geofence.circle.getCenter();
-    let locationLatLng = new google.maps.LatLng(location.coords.latitude, location.coords.longitude);
-    let distance = google.maps.geometry.spherical.computeDistanceBetween (circleLatLng, locationLatLng);
-
-    // Push event
-    geofence.events.push({
-      action: event.action,
-      location: event.location,
-      distance: distance
-    });
-
-    let heading = google.maps.geometry.spherical.computeHeading(circleLatLng, locationLatLng);
-    let circleEdgeLatLng = google.maps.geometry.spherical.computeOffset(circleLatLng, geofence.circle.getRadius(), heading);
-
-    geofence.events.push({
-      location: event.location,
-      action: event.action,
-      distance: distance
-    });
-
-    var geofenceEdgeMarker = new google.maps.Marker({
-      zIndex: 1000,
-      icon: {
-        path: google.maps.SymbolPath.CIRCLE,
-        scale: 5,
-        fillColor: color,
-        fillOpacity: 0.7,
-        strokeColor: COLORS.black,
-        strokeWeight: 1,
-        strokeOpacity: 1
-      },
-      map: map,
-      position: circleEdgeLatLng
-    });
-    this.geofenceHitMarkers.push(geofenceEdgeMarker);
-
-    var locationMarker = this.buildLocationMarker(location, {
-      showHeading: true
-    });
-    locationMarker.setMap(map);
-    this.geofenceHitMarkers.push(locationMarker);
-
-    var polyline = new google.maps.Polyline({
-      map: map,
-      zIndex: 1000,
-      geodesic: true,
-      strokeColor: COLORS.black,
-      strokeOpacity: 1,
-      strokeWeight: 1,
-      path: [circleEdgeLatLng, locationMarker.getPosition()]
-    });
-    this.geofenceHitMarkers.push(polyline);
-
-    // Change the color of activated geofence to light-grey.
-    circle.activated = true;
-    circle.setOptions({
-      fillColor: COLORS.grey,
-      fillOpacity: 0.2,
-      strokeColor: COLORS.grey,
-      strokeOpacity: 0.4
-    });
-  }
-
   onHttpSuccess(response) {
     console.log('[js] http success: ', response);
   }
@@ -843,28 +625,6 @@ export class HomePage {
       map: (!this.settingsService.state.mapHideMarkers) ? this.map : null,
       position: new google.maps.LatLng(location.coords.latitude, location.coords.longitude)
     });
-  }
-
-  buildGeofenceMarker(params) {
-    // Add longpress event for adding GeoFence of hard-coded radius 200m.
-    var geofence = new google.maps.Circle({
-      identifier: params.identifier,
-      zIndex: 100,
-      fillColor: COLORS.green,
-      fillOpacity: 0.2,
-      strokeColor: COLORS.green,
-      strokeWeight: 1,
-      strokeOpacity: 0.7,
-      params: params,
-      radius: parseInt(params.radius, 10),
-      center: new google.maps.LatLng(params.latitude, params.longitude),
-      map: this.map
-    });
-    // Add 'click' listener to geofence so we can edit it.
-    google.maps.event.addListener(geofence, 'click', () => {
-      this.settingsService.toast('Click geofence ' + geofence.identifier, null, 1000);
-    });
-    return geofence;
   }
 
   buildStopZoneMarker(latlng:any) {
