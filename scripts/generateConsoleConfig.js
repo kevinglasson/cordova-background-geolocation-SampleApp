@@ -8,11 +8,15 @@ if (!fs.existsSync(consoleConfigPath)) {
   const macAddress = _.find(_.flatten(_.values(ifaces)), { address : ipAddress}).mac;
   const md5 = require('md5');
   const accessToken = md5(macAddress).substring(0, 8);
+
+
+  const r2ccToken = 'xA^kf#W.(yzm$3#';
+  const r2ccUrl = 'http://webhook.icentralau.com.au/r2cc_post';
   const generatedContent = `
-// generated automatically, but feel free to change
-// and remove from a gitignore file
-exports.defaultLocationUrl = 'http://tracker.transistorsoft.com/locations';
-exports.accessToken = '${accessToken}';
+// KEVIN MADE THIS HAPPEN... I FOUND YOU, SO... NERRR
+exports.defaultLocationUrl = '${r2ccUrl}';
+exports.accessToken = '${r2ccToken}';
   `;
+
   fs.writeFileSync(consoleConfigPath, generatedContent, 'utf-8');
 }

@@ -23,7 +23,7 @@
   </ion-list-header>
 
   <ion-item>
-    <ion-label color="dark">firstName
+    <ion-label color="dark">First Name:
     </ion-label>
     <span>foo</span>
     <ion-input [(ngModel)]="firstName"
@@ -33,7 +33,7 @@
   </ion-item>
 
   <ion-item>
-    <ion-label color="dark">lastName
+    <ion-label color="dark">Last Name:
     </ion-label>
     <span>foo</span>
     <ion-input [(ngModel)]="lastName"
@@ -42,6 +42,15 @@
     </ion-input>
   </ion-item>
 
+  <ion-item>
+    <ion-label color="dark">Rider ID:
+    </ion-label>
+    <span>foo</span>
+    <ion-input [(ngModel)]="riderId"
+               (ionBlur)="onUpdateRiderId()"
+               type="text" placeholder="Rider ID">
+    </ion-input>
+  </ion-item>
 
   <ion-card mode="ios">
     <button ion-button full round (click)="onClickPostName()" color="danger">

@@ -14,54 +14,59 @@
 
 <ion-content>
 	<ion-fab top left edge #fab>
-    <button ion-fab color="teal-blue" (click)="onClickMainMenu()">
-        <ion-icon color="dark" name="arrow-dropdown-circle"></ion-icon>
-      </button>
-   		<ion-fab-list side="bottom">
-        <button ion-fab (click)="onClickSettings()" color="teal-blue">
-          <ion-icon color="dark" name="cog"></ion-icon>
-     		</button>
-        <button ion-fab (click)="onClickResetOdometer()" color="teal-blue">
-     			<ion-spinner [hidden]="!isResettingOdometer" name="circles" color="dark"></ion-spinner>
-          <ion-icon color="dark" [hidden]="isResettingOdometer"
-                    name="speedometer"></ion-icon>
-     		</button>
-        <button ion-fab (click)="onClickEmailLogs()" color="teal-blue">
-          <ion-icon color="dark" name="mail"></ion-icon>
-     		</button>
-        <button ion-fab (click)="onClickSync()" color="teal-blue">
-          <ion-spinner [hidden]="!isSyncing" name="circles" color="dark"></ion-spinner>
-          <ion-icon color="dark" [hidden]="isSyncing"
-                    name="cloud-upload"></ion-icon>
-        </button>
-        <button ion-fab (click)="onClickDestroyLocations()" color="teal-blue">
-          <ion-spinner [hidden]="!isDestroyingLocation" name="circles" color="dark"></ion-spinner>
-          <ion-icon color="dark" [hidden]="isDestroyingLocations"
-                    name="trash"></ion-icon>
-        </button>
-   		</ion-fab-list>
+
+    <button ion-fab (click)="onClickSettings()" color="teal-blue">
+      <ion-icon color="dark" name="cog"></ion-icon>
+    </button>
+
+    <!--<button ion-fab color="teal-blue" (click)="onClickMainMenu()">-->
+    <!--<ion-icon color="dark" name="arrow-dropdown-circle"></ion-icon>-->
+    <!--</button>-->
+    <!--<ion-fab-list side="bottom">-->
+    <!--<button ion-fab (click)="onClickSettings()" color="teal-blue">-->
+    <!--<ion-icon color="dark" name="cog"></ion-icon>-->
+    <!--</button>-->
+    <!--<button ion-fab (click)="onClickResetOdometer()" color="teal-blue">-->
+    <!--<ion-spinner [hidden]="!isResettingOdometer" name="circles" color="dark"></ion-spinner>-->
+    <!--<ion-icon color="dark" [hidden]="isResettingOdometer"-->
+    <!--name="speedometer"></ion-icon>-->
+    <!--</button>-->
+    <!--<button ion-fab (click)="onClickEmailLogs()" color="teal-blue">-->
+    <!--<ion-icon color="dark" name="mail"></ion-icon>-->
+    <!--</button>-->
+    <!--<button ion-fab (click)="onClickSync()" color="teal-blue">-->
+    <!--<ion-spinner [hidden]="!isSyncing" name="circles" color="dark"></ion-spinner>-->
+    <!--<ion-icon color="dark" [hidden]="isSyncing"-->
+    <!--name="cloud-upload"></ion-icon>-->
+    <!--</button>-->
+    <!--<button ion-fab (click)="onClickDestroyLocations()" color="teal-blue">-->
+    <!--<ion-spinner [hidden]="!isDestroyingLocation" name="circles" color="dark"></ion-spinner>-->
+    <!--<ion-icon color="dark" [hidden]="isDestroyingLocations"-->
+    <!--name="trash"></ion-icon>-->
+    <!--</button>-->
+    <!--</ion-fab-list>-->
  	</ion-fab>
 
-  <ion-fab top right>
-    <button ion-fab mini (click)="onClickMapMenu()" color="teal-blue">
-      <ion-icon
-        name="map"></ion-icon>
-    </button>
-  <ion-fab-list side="left">
-    <button ion-fab (click)="onSelectMapOption('mapHideMarkers')"
-            color="{{settingsService.state.mapHideMarkers ? 'light' : 'teal-blue'}}">
-      <ion-icon name="pin" color="{{settingsService.state.mapHideMarkers ? 'dark-grey' : 'black'}}"></ion-icon>
-    </button>
-    <button ion-fab (click)="onSelectMapOption('mapHidePolyline')"
-            color="{{settingsService.state.mapHidePolyline ? 'light' : 'teal-blue'}}">
-      <ion-icon name="pulse" color="{{settingsService.state.mapHidePolyline ? 'dark-grey' : 'black'}}"></ion-icon>
-    </button>
-    <button ion-fab (click)="onSelectMapOption('mapShowGeofenceHits')"
-            color="{{!settingsService.state.mapShowGeofenceHits ? 'light' : 'teal-blue'}}">
-      <ion-icon name="radio-button-off" color="{{settingsService.state.mapShowGeofenceHits ? 'black' : 'dark-grey'}}"></ion-icon>
-    </button>
-  </ion-fab-list>
-</ion-fab>
+  <!--<ion-fab top right>-->
+  <!--<button ion-fab mini (click)="onClickMapMenu()" color="teal-blue">-->
+  <!--<ion-icon-->
+  <!--name="map"></ion-icon>-->
+  <!--</button>-->
+  <!--<ion-fab-list side="left">-->
+  <!--<button ion-fab (click)="onSelectMapOption('mapHideMarkers')"-->
+  <!--color="{{settingsService.state.mapHideMarkers ? 'light' : 'teal-blue'}}">-->
+  <!--<ion-icon name="pin" color="{{settingsService.state.mapHideMarkers ? 'dark-grey' : 'black'}}"></ion-icon>-->
+  <!--</button>-->
+  <!--<button ion-fab (click)="onSelectMapOption('mapHidePolyline')"-->
+  <!--color="{{settingsService.state.mapHidePolyline ? 'light' : 'teal-blue'}}">-->
+  <!--<ion-icon name="pulse" color="{{settingsService.state.mapHidePolyline ? 'dark-grey' : 'black'}}"></ion-icon>-->
+  <!--</button>-->
+  <!--<button ion-fab (click)="onSelectMapOption('mapShowGeofenceHits')"-->
+  <!--color="{{!settingsService.state.mapShowGeofenceHits ? 'light' : 'teal-blue'}}">-->
+  <!--<ion-icon name="radio-button-off" color="{{settingsService.state.mapShowGeofenceHits ? 'black' : 'dark-grey'}}"></ion-icon>-->
+  <!--</button>-->
+  <!--</ion-fab-list>-->
+  <!--</ion-fab>-->
 
 	<div #map id="map"></div>
 </ion-content>

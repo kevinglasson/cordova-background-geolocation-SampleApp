@@ -50,6 +50,7 @@ export class SettingsPage {
   // KEVIN - me again ^_^
   firstName: string;
   lastName: string;
+  riderId: string;
   uuid: string;
   // END KEVIN
 
@@ -106,26 +107,25 @@ export class SettingsPage {
     let storage = (<any>window).localStorage;
     var email = storage.getItem('settings:email');
 
-
-    // KEVIN
-    var firstName = storage.getItem('settings:firstName');
-    var lastName = storage.getItem('settings:lastName');
-
     if (email) {
       this.email = email;
     }
+
+    // KEVIN
+    let firstName = storage.getItem('settings:firstName');
+    let lastName = storage.getItem('settings:lastName');
+    let riderId = storage.getItem('settings:riderId');
+
     if (firstName) {
       this.firstName = firstName;
     }
     if (lastName) {
       this.lastName = lastName;
     }
-    // END KEVIN
-
-
-    if (email) {
-      this.email = email;
+    if (riderId) {
+      this.riderId = riderId;
     }
+    // END KEVIN
   }
 
   ionViewWillEnter() {
@@ -242,67 +242,66 @@ export class SettingsPage {
     this.bgService.playSound('BUTTON_CLICK');
     let storage = (<any>window).localStorage;
     storage.setItem('settings:firstName', this.firstName);
-    console.log('Stored: ' + this.firstName)
+    console.log('Stored: ' + this.firstName);
   }
 
   onUpdateLastName() {
     this.bgService.playSound('BUTTON_CLICK');
     let storage = (<any>window).localStorage;
     storage.setItem('settings:lastName', this.lastName);
-    console.log('Stored: ' + this.lastName)
+    console.log('Stored: ' + this.lastName);
+  }
+
+  onUpdateRiderId() {
+    this.bgService.playSound('BUTTON_CLICK');
+    let storage = (<any>window).localStorage;
+    storage.setItem('settings:riderId', this.riderId);
+    console.log('Stored: ' + this.riderId);
   }
 
   onClickPostName() {
-    if (!this.uuid) {
-      let storage = (<any>window).localStorage;
-      this.uuid = storage.getItem('device:uuid');
-    }
-
-    let data = {
-      firstName: this.firstName,
-      lastName: this.lastName,
-      type: 'name',
-      device: {
-        uuid: this.uuid,
-        accessToken: 'xA^kf#W.(yzm$3#'
+    // Check if the fields are filled
+    if (!this.firstName || !this.lastName || !this.riderId) {
+      this.notify('Error', 'Cannot save, check all fields are filled out');
+    } else {
+      if (!this.uuid) {
+        let storage = (<any>window).localStorage;
+        this.uuid = storage.getItem('device:uuid');
       }
-    };
 
-    let message = this.firstName + ' ' + this.lastName;
+      let data = {
+        firstName: this.firstName,
+        lastName: this.lastName,
+        riderId: this.riderId,
+        type: 'name',
+        device: {
+          uuid: this.uuid,
+          accessToken: 'xA^kf#W.(yzm$3#'
+        }
+      };
 
-    this.settingsService.confirm('Updating name', message, () => {
-      this.settingsService.post(data, this.state.url)
-        .subscribe(function (response) {
-            console.log("Success " + response
-            )
-          },
-          function (error) {
-            console.log("Error " + error
-            )
-          },
-          function () {
-            console.log("[js] POST Success")
-          });
-    });
+      //TODO: rider ID checking needs to happen here
+      let message = this.firstName + ' ' + this.lastName;
 
-    console.log('Posting', data);
+      this.settingsService.confirm('Updating', message, () => {
+        this.settingsService.post(data, this.state.url)
+          .subscribe(function (response) {
+              console.log("Success " + response);
+              this.notify('Success', 'Updated!');
+            },
+            function (error) {
+              console.log("Error " + error);
+              this.notify('Error', 'Not updated, check ID is correct');
 
-    this.settingsService.post(data, this.state.url)
-      .subscribe(function (response) {
-          console.log("Success " + response
-          )
-        },
-        function (error) {
-          console.log("Error " + error
-          )
-        },
-        function () {
-          console.log("[js] POST Success")
-        });
+            },
+            function () {
+              console.log("[js] POST Success")
+            });
+      });
+    }
   }
 
   // END KEVIN
-
 
   onClickEmailLog() {
     this.bgService.playSound('BUTTON_CLICK');
@@ -335,56 +334,6 @@ export class SettingsPage {
         this.isDestroyingLog = false;
         this.settingsService.toast('Destroyed logs');
       });
-    });
-  }
-
-  onClickRemoveGeofences() {
-    this.bgService.playSound('BUTTON_CLICK');
-
-    this.bgService.getPlugin().removeGeofences(() => {
-      this.bgService.playSound('MESSAGE_SENT');
-    }, (error) => {
-      this.bgService.playSound('ERROR');
-      this.notify('Remove geofences error', error);
-    });
-  }
-
-  onClickLoadGeofences() {
-    this.bgService.playSound('BUTTON_CLICK');
-    this.isAddingGeofences = true;
-
-    var bgGeo = this.bgService.getPlugin();
-    var data = this.bgService.getCityDriveData();
-    var geofences = [], latlng;
-
-    for (var n = 0, len = data.length; n < len; n++) {
-      latlng = data[n];
-      geofences.push({
-        identifier: 'city_drive_' + (n + 1),
-        latitude: parseFloat(latlng.lat),
-        longitude: parseFloat(latlng.lng),
-        radius: this.settingsService.state.geofenceRadius,
-        notifyOnEntry: this.settingsService.state.geofenceNotifyOnEntry,
-        notifyOnExit: this.settingsService.state.geofenceNotifyOnExit,
-        notifyOnDwell: this.settingsService.state.geofenceNotifyOnDwell,
-        loiteringDelay: this.settingsService.state.geofenceLoiteringDelay,
-        extras: {'geofence_extra': 'foo'}
-      });
-    }
-
-    function onComplete() {
-      this.zone.run(() => {
-        this.isAddingGeofences = false;
-      })
-    };
-
-    bgGeo.addGeofences(geofences, () => {
-      onComplete.call(this);
-      this.bgService.playSound('ADD_GEOFENCE');
-    }, (error) => {
-      onComplete.call(this);
-      this.bgService.playSound('ERROR');
-      this.notify('Add geofences error', error);
     });
   }
 
