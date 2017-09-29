@@ -1,9 +1,11 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.transistorsoft.backgroundgeolocation.ionic2" version="2.8.0"
+<widget id="com.perkinsinstitute.livetracking.ionic" version="2.8.0"
         xmlns="http://www.w3.org/ns/widgets">
   <name>R2CC</name>
   <description>Location Tracking App</description>
-    <author email="info@transistorsoft.com" href="http://www.transistorsoft.com/shop/products/cordova-background-geolocation">Transistor Software</author>
+  <author email="kevinglasson@gmail.com" href="http://www.TODO.com">Innovation
+    Central Perth
+  </author>
   <content src="index.html"/>
     <access origin="*" />
     <allow-navigation href="http://ionic.local/*" />
@@ -77,6 +79,7 @@
   <allow-navigation href="http://10.100.0.43:8100"/>
   <allow-navigation href="http://134.7.234.171:8100"/>
   <allow-navigation href="http://10.1.1.36:8100"/>
+  <allow-navigation href="http://10.254.253.184:8100"/>
   <engine name="android" spec="^6.2.3"/>
     <engine name="ios" spec="^4.4.0" />
     <plugin name="cordova-background-geolocation-lt" spec="^2.8.3">
