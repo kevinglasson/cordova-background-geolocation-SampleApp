@@ -29,6 +29,11 @@
         <ion-icon color="dark" name="settings"></ion-icon>
       </button>
 
+      <!--Activities link-->
+      <button ion-fab (click)="onClickActivities()" color="teal-blue">
+        <ion-icon color="dark" name="folder"></ion-icon>
+      </button>
+
       <!--Reset the odometer-->
       <button ion-fab (click)="onClickResetOdometer()" color="teal-blue">
         <ion-spinner [hidden]="!isResettingOdometer" name="circles"

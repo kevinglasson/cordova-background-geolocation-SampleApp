@@ -11,6 +11,7 @@ import {SettingsPage} from '../settings/settings';
 import {BGService} from '../../lib/BGService';
 import {SettingsService} from '../../lib/SettingsService';
 import {AboutPage} from '../about/about';
+import {ActivitiesPage} from '../activities/activities'
 
 declare var google;
 
@@ -106,6 +107,16 @@ export class HomePage {
   isDestroyingLocations: boolean;
   isResettingOdometer: boolean;
   isMapMenuOpen: boolean;
+
+  // Timekeeping
+  projectActive: boolean;
+  timerInterval: any;
+  isActive: boolean;
+  lastChecked: any;
+  secondsElapsed: any;
+  totalSeconds: any;
+
+
 
   constructor(private navCtrl: NavController,
               private platform: Platform,
@@ -295,9 +306,14 @@ export class HomePage {
   }
 
   onClickSettings() {
-    //this.navCtrl.push(SettingsPage);
     this.bgService.playSound('OPEN');
     let modal = this.modalController.create(SettingsPage, {});
+    modal.present();
+  }
+
+  onClickActivities() {
+    this.bgService.playSound('OPEN');
+    let modal = this.modalController.create(ActivitiesPage, {});
     modal.present();
   }
 

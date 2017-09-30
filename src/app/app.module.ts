@@ -11,9 +11,12 @@ import {HomePage} from '../pages/home/home';
 import {SettingsPage} from '../pages/settings/settings';
 import {GeofencePage} from '../pages/geofence/geofence';
 import {AboutPage} from '../pages/about/about';
+import {ActivitiesPage} from '../pages/activities/activities';
 import {BGService} from '../lib/BGService';
 import {SettingsService} from '../lib/SettingsService';
 import {TestService} from '../lib/TestService';
+import {Activities} from '../providers/activities/activities';
+
 // END KEVIN
 
 (<any>window).TestService = new TestService();
@@ -25,7 +28,8 @@ import {TestService} from '../lib/TestService';
     HomePage,
     SettingsPage,
     GeofencePage,
-    AboutPage
+    AboutPage,
+    ActivitiesPage
   ],
   imports: [
     // KEVIN
@@ -40,13 +44,18 @@ import {TestService} from '../lib/TestService';
     HomePage,
     SettingsPage,
     GeofencePage,
-    AboutPage
+    AboutPage,
+    ActivitiesPage,
   ],
   providers: [
     StatusBar,
     SplashScreen,
     Device,
-    {provide: ErrorHandler, useClass: IonicErrorHandler}, BGService, SettingsService
+    {
+      provide: ErrorHandler,
+      useClass: IonicErrorHandler
+    }, BGService, SettingsService,
+    Activities
   ]
 })
 export class AppModule {}
