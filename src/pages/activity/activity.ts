@@ -11,7 +11,7 @@ import {StopTimingPage} from '../stop-timing/stop-timing';
 
 @Component({
   selector: 'page-activities',
-  templateUrl: 'activities.html'
+  templateUrl: 'activity.html'
 })
 export class ActivitiesPage {
 
@@ -28,6 +28,7 @@ export class ActivitiesPage {
   }
 
   newActivity(): void {
+    console.log('[js] new activity');
 
     let prompt = this.alertCtrl.create({
       title: 'New Activity',
@@ -79,11 +80,9 @@ export class ActivitiesPage {
     });
 
     prompt.present();
-
   }
 
   toggleTimer(activity): void {
-
 
     if (!activity.active) {
 
@@ -122,13 +121,11 @@ export class ActivitiesPage {
       });
 
       modal.present();
-
     }
-
   }
 
   onClickClose() {
+    this.activitiesService.clean();
     this.viewCtrl.dismiss();
   }
-
 }

@@ -286,7 +286,7 @@ const SETTINGS = {
       inputType: 'select',
       multiple: true,
       values: ['in_vehicle', 'on_bicycle', 'on_foot', 'running', 'walking'],
-      defaultValue: 'on_bicycle'
+      defaultValue: ''
     },
     // Application
     {

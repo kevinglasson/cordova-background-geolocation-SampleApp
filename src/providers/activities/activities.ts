@@ -1,7 +1,8 @@
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 import 'rxjs/add/operator/map';
-import {ActivityModel} from '../models/activity-model';
-import {reorderArray,} from 'ionic-angular';
+import { Storage } from '@ionic/storage';
+import { ActivityModel } from '../models/activity-model';
+import { reorderArray } from 'ionic-angular';
 
 @Injectable()
 export class Activities {
@@ -10,43 +11,41 @@ export class Activities {
   activityActive = false;
   timerInterval: any;
   secondsElapsed: number = 0;
-  storage: any;
 
-  constructor() {
+  constructor(public storage: Storage) {
 
   }
 
   load(): void {
     console.log('[js] (load)');
 
-    let storage = (<any>window).localStorage;
-    let activities = storage.getItem('permatimerProjects');
+    this.storage.get('activityList').then((activities) => {
+      if (activities) {
 
-    if (activities) {
+        for (let activity of activities) {
 
-      for (let activity of activities) {
+          let savedActivity = new ActivityModel(activity.name, new Date(activity.lastChecked), activity.totalSeconds, activity.active);
+          this.activities.push(savedActivity);
 
-        let savedActivity = new ActivityModel(activity.name, new Date(activity.lastChecked), activity.totalSeconds, activity.active);
-        this.activities.push(savedActivity);
-
-        if (activity.active) {
-          this.startTiming(savedActivity, true);
+          if (activity.active) {
+            this.startTiming(savedActivity, true);
+          }
         }
       }
-    }
+    });
 
-    let time = storage.getItem('permatimerTime');
-
-    if (time) {
+    this.storage.get('activityTime').then((time) => {
       this.secondsElapsed = time;
-    }
+    });
+
+    console.log('DEBUG: Number of activities loaded is: ', this.activities.length);
   }
 
   save(): void {
     console.log('[js] (save)');
-    let storage = (<any>window).localStorage;
-    storage.setItem('permatimerProjects', this.activities);
-    storage.setItem('permatimerTime', this.secondsElapsed);
+
+    this.storage.set('activityList', this.activities);
+    this.storage.set('activityTime', this.secondsElapsed);
   }
 
   reorder(indexes): void {
@@ -131,5 +130,9 @@ export class Activities {
 
   }
 
+  clean(): void {
+    console.log('[js] clean activity list');
+    this.activities = [];
+  }
 
 }

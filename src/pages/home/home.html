@@ -109,8 +109,8 @@
       <span ion-text class="odometer" color="">{{this.state.odometer}}km</span>
     </ion-title>
     <ion-buttons end>
-      <button ion-button solid [disabled]="!state.enabled"
-              (click)="onClickChangePace()" style="width:50px"
+      <button ion-button solid
+              [(ngModel)]="state.enabled" (ionChange)="onClickBegin()" style="width:50px"
               color="{{state.isMoving ? 'danger' : 'secondary'}}">
         <ion-spinner [hidden]="!state.isChangingPace" name="dots"
                      color="light"></ion-spinner>

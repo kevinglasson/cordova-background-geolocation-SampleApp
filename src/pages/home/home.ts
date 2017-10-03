@@ -11,7 +11,7 @@ import {SettingsPage} from '../settings/settings';
 import {BGService} from '../../lib/BGService';
 import {SettingsService} from '../../lib/SettingsService';
 import {AboutPage} from '../about/about';
-import {ActivitiesPage} from '../activities/activities'
+import {ActivitiesPage} from '../activity/activity'
 
 declare var google;
 
@@ -56,7 +56,7 @@ const MESSAGE = {
   destroy_locations_failure: 'Destroy locations error: {result}',
   removing_markers: 'Removing markers...',
   rendering_markers: 'Rendering markers...'
-}
+};
 
 @Component({
   selector: 'page-home',
@@ -329,7 +329,7 @@ export class HomePage {
     function onComplete(message, result) {
       this.settingsService.toast(message, result);
       this.zone.run(() => { this.isSyncing = false; })
-    };
+    }
 
     let bgGeo = this.bgService.getPlugin();
     bgGeo.getCount((count) => {
@@ -353,7 +353,7 @@ export class HomePage {
     function onComplete(message, result) {
       this.settingsService.toast(message, result);
       this.zone.run(() => { this.isDestroyingLocations = false; })
-    };
+    }
 
     let bgGeo = this.bgService.getPlugin();
     bgGeo.getCount((count) => {
@@ -433,6 +433,9 @@ export class HomePage {
   }
 
   onClickChangePace() {
+
+    this.onToggleEnabled();
+
     if (!this.state.enabled) {
       return;
     }
@@ -693,7 +696,7 @@ export class HomePage {
     // Clear geofence hit markers
     this.geofenceHitMarkers.forEach((marker) => {
       marker.setMap(null);
-    })
+    });
 
     this.polyline.setPath([]);
   }
@@ -716,5 +719,10 @@ export class HomePage {
 
   alert(title, message) {
 
+  }
+
+  onClickBegin() {
+    console.log('[js] onClickBegin');
+    this.onClickChangePace();
   }
 }
