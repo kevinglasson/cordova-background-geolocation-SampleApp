@@ -110,7 +110,7 @@
     </ion-title>
     <ion-buttons end>
       <button ion-button solid
-              [(ngModel)]="state.enabled" (ionChange)="onClickBegin()" style="width:50px"
+              (click)="onClickChangePace()" style="width:50px"
               color="{{state.isMoving ? 'danger' : 'secondary'}}">
         <ion-spinner [hidden]="!state.isChangingPace" name="dots"
                      color="light"></ion-spinner>
@@ -120,4 +120,3 @@
     </ion-buttons>
   </ion-toolbar>
 </ion-footer>
-

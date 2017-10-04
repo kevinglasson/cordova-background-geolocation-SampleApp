@@ -434,8 +434,6 @@ export class HomePage {
 
   onClickChangePace() {
 
-    this.onToggleEnabled();
-
     if (!this.state.enabled) {
       return;
     }

@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import 'rxjs/add/operator/map';
-import { Storage } from '@ionic/storage';
-import { ActivityModel } from '../models/activity-model';
-import { reorderArray } from 'ionic-angular';
+import {Storage} from '@ionic/storage';
+import {ActivityModel} from '../models/activity-model';
+import {reorderArray} from 'ionic-angular';
 
 @Injectable()
 export class Activities {
@@ -13,7 +13,6 @@ export class Activities {
   secondsElapsed: number = 0;
 
   constructor(public storage: Storage) {
-
   }
 
   load(): void {
