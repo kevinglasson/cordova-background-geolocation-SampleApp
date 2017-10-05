@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.perkinsinstitute.livetracking.ionic" version="2.8.0" xmlns="http://www.w3.org/ns/widgets">
-    <name>R2CC</name>
-    <description>Location Tracking App</description>
-    <author email="kevinglasson@gmail.com" href="http://www.TODO.com">Innovation
+<widget id="com.perkinsinstitute.livetracking.ionic" version="2.8.0" xmlns="http://www.w3.org/ns/widgets" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/ns/widgets ">
+    <name>Perkins Ride Tracker</name>
+    <description>Live Tracking App</description>
+    <author email="kevinglasson@gmail.com" href="http://www.icentralau.com.au">Innovation
     Central Perth
   </author>
     <content src="index.html" />
@@ -83,14 +83,14 @@
     <allow-navigation href="http://10.254.253.184:8100" />
     <allow-navigation href="http://134.7.115.208:8100" />
     <engine name="android" spec="^6.2.3" />
-    <engine name="ios" spec="^4.4.0" />
+    <engine name="ios" spec="^4.5.1" />
     <plugin name="cordova-background-geolocation-lt" spec="^2.8.5">
         <variable name="LICENSE" value="YOUR_LICENSE_KEY" />
         <variable name="BACKGROUND_MODE_LOCATION" value="&lt;string&gt;location&lt;/string&gt;" />
-        <variable name="LOCATION_ALWAYS_AND_WHEN_IN_USE_USAGE_DESCRIPTION" value="[CHANGEME] Always use is required for constant background location-tracking" />
+        <variable name="LOCATION_ALWAYS_AND_WHEN_IN_USE_USAGE_DESCRIPTION" value="ALWAYS USE is required for constant background location-tracking" />
         <variable name="LOCATION_ALWAYS_USAGE_DESCRIPTION" value="Background location-tracking is required" />
-        <variable name="LOCATION_WHEN_IN_USE_USAGE_DESCRIPTION" value="[CHANGEME] Background location-tracking is required" />
-        <variable name="MOTION_USAGE_DESCRIPTION" value="[CHANGEME] Using the accelerometer increases battery-efficiency by intelligently toggling location-tracking only when the device is detected to be moving" />
+        <variable name="LOCATION_WHEN_IN_USE_USAGE_DESCRIPTION" value="Background location-tracking is required" />
+        <variable name="MOTION_USAGE_DESCRIPTION" value="Using the accelerometer increases battery-efficiency by intelligently toggling location-tracking only when the device is detected to be moving" />
     </plugin>
     <plugin name="cordova-plugin-device" spec="^1.1.6" />
     <plugin name="cordova-plugin-splashscreen" spec="^4.0.3" />
