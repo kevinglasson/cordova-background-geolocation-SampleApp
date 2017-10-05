@@ -1,6 +1,7 @@
 import {Component, ElementRef, NgZone, ViewChild} from '@angular/core';
 
 import {
+  AlertController,
   LoadingController,
   ModalController,
   NavController,
@@ -12,8 +13,11 @@ import {BGService} from '../../lib/BGService';
 import {SettingsService} from '../../lib/SettingsService';
 import {AboutPage} from '../about/about';
 import {ActivitiesPage} from '../activity/activity'
+// For activity tracking
+import {Activities} from '../../providers/activities/activities';
+import {ActivityModel} from '../../providers/models/activity-model';
 
-declare var google;
+declare const google;
 
 // Colors
 const COLORS = {
@@ -93,7 +97,6 @@ export class HomePage {
   geofenceHitMarkers: any;
   polyline: any;
   stationaryRadiusCircle: any;
-  geofenceCursor: any;
   locationMarkers: any;
   geofenceMarkers: any;
   lastDirectionChangeLocation: any;
@@ -108,15 +111,8 @@ export class HomePage {
   isResettingOdometer: boolean;
   isMapMenuOpen: boolean;
 
-  // Timekeeping
-  projectActive: boolean;
-  timerInterval: any;
-  isActive: boolean;
-  lastChecked: any;
-  secondsElapsed: any;
-  totalSeconds: any;
-
-
+  // Activity
+  currentActivity: any;
 
   constructor(private navCtrl: NavController,
               private platform: Platform,
@@ -124,7 +120,9 @@ export class HomePage {
               private settingsService:SettingsService,
               private zone:NgZone,
               private loadingCtrl: LoadingController,
-              private modalController: ModalController) {
+              private modalController: ModalController,
+              public activitiesService: Activities,
+              private alertCtrl: AlertController,) {
 
     this.bgService.on('change', this.onBackgroundGeolocationSettingsChanged.bind(this));
     this.bgService.on('start', this.onBackgroundGeolocationStarted.bind(this));
@@ -163,6 +161,9 @@ export class HomePage {
     this.platform.ready().then(() => {
       this.configureMap();
       this.configureBackgroundGeolocation();
+
+      // load the activities
+      this.activitiesService.load();
     });
   }
 
@@ -250,7 +251,7 @@ export class HomePage {
    * Configure BackgroundGeolocation plugin
    */
   configureBackgroundGeolocation() {
-    var bgGeo = this.bgService.getPlugin();
+    let bgGeo = this.bgService.getPlugin();
 
     // Listen to events
     this.onLocation = this.onLocation.bind(this);
@@ -312,6 +313,7 @@ export class HomePage {
   }
 
   onClickActivities() {
+    this.activitiesService.clean();
     this.bgService.playSound('OPEN');
     let modal = this.modalController.create(ActivitiesPage, {});
     modal.present();
@@ -399,6 +401,21 @@ export class HomePage {
 
     let bgGeo = this.bgService.getPlugin();
     if (this.state.enabled) {
+
+      ////
+      // Implement activity add
+      //
+
+      // Create a new activity
+      this.newActivity();
+
+      console.log('current activity after toggle', this.currentActivity);
+
+      // Reset the odometer
+      //this.onClickResetOdometer();
+
+      // END
+
       if (this.bgService.isLocationTrackingMode()) {
         bgGeo.start(function() {
           console.warn('[js] START SUCCESS');
@@ -435,6 +452,7 @@ export class HomePage {
   onClickChangePace() {
 
     if (!this.state.enabled) {
+      this.notify('Oops!', 'Don\'t forget to toggle on');
       return;
     }
 
@@ -450,9 +468,10 @@ export class HomePage {
     this.state.paceIcon = this.iconMap['pace_' + this.state.isMoving];
     bgGeo.changePace(this.state.isMoving, () => {
       onComplete.call(this);
+      this.toggleTimer(this.currentActivity);
     }, (error) => {
       onComplete.call(this);
-      alert('Failed to changePace');
+      alert('Failed to begin activity');
     });
   }
 
@@ -464,7 +483,7 @@ export class HomePage {
 
     switch(name) {
       case 'mapHideMarkers':
-        var loader = this.loadingCtrl.create({
+        let loader = this.loadingCtrl.create({
           content: (value) ? MESSAGE.removing_markers : MESSAGE.rendering_markers
         });
         loader.present();
@@ -584,7 +603,7 @@ export class HomePage {
   }
 
   updateCurrentLocationMarker(location) {
-    var latlng = new google.maps.LatLng(location.coords.latitude, location.coords.longitude);
+    let latlng = new google.maps.LatLng(location.coords.latitude, location.coords.longitude);
     this.currentLocationMarker.setPosition(latlng);
     this.locationAccuracyCircle.setCenter(latlng);
     this.locationAccuracyCircle.setRadius(location.coords.accuracy);
@@ -606,18 +625,18 @@ export class HomePage {
   // Build a bread-crumb location marker.
   buildLocationMarker(location, options?) {
     options = options || {};
-    var icon = google.maps.SymbolPath.CIRCLE;
-    var scale = 3;
-    var zIndex = 1;
-    var anchor;
-    var strokeWeight = 1;
+    let icon = google.maps.SymbolPath.CIRCLE;
+    let scale = 3;
+    let zIndex = 1;
+    let anchor;
+    let strokeWeight = 1;
 
     if (!this.lastDirectionChangeLocation) {
       this.lastDirectionChangeLocation = location;
     }
 
     // Render an arrow marker if heading changes by 10 degrees or every 5 points.
-    var deltaHeading = Math.abs(location.coords.heading - this.lastDirectionChangeLocation.coords.heading);
+    let deltaHeading = Math.abs(location.coords.heading - this.lastDirectionChangeLocation.coords.heading);
     if ((deltaHeading >= 15) || !(this.locationMarkers.length % 5) || options.showHeading) {
       icon = google.maps.SymbolPath.FORWARD_CLOSED_ARROW;
       scale = 2;
@@ -715,12 +734,89 @@ export class HomePage {
     this.polyline.setPath([]);
   }
 
-  alert(title, message) {
+  // alert(title, message) {
+  // }
 
+  notify(title, message) {
+    this.alertCtrl.create({
+      title: title,
+      subTitle: message,
+      buttons: ['Dismiss']
+    }).present();
   }
 
-  onClickBegin() {
-    console.log('[js] onClickBegin');
-    this.onClickChangePace();
+  ////
+  // Activity stuff
+  //
+  newActivity(): void {
+    console.log('[js] new activity');
+
+    let prompt = this.alertCtrl.create({
+      title: 'New Activity',
+      message: 'Enter a name for your new activity',
+      inputs: [
+        {
+          name: 'title'
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancel'
+        },
+        {
+          text: 'Add',
+          handler: (data) => {
+            let activity = new ActivityModel(data.title, new Date(), 0, false);
+            this.activitiesService.addActivity(activity);
+            // Store the current activity
+            this.currentActivity = activity;
+          }
+        }
+      ]
+    });
+    prompt.present();
   }
+
+  toggleTimer(activity): void {
+
+    if (!activity.active) {
+
+      if (!this.activitiesService.activityActive) {
+        this.activitiesService.startTiming(activity, false);
+      } else {
+
+        let alert = this.alertCtrl.create({
+          title: 'Oops!',
+          subTitle: 'You are already timing a activity. You must stop it before timing a new activity.',
+          buttons: ['OK']
+        });
+
+        alert.present();
+
+      }
+
+    } else {
+
+      let elapsedTime = this.activitiesService.stopTiming(activity);
+
+      // let modal = this.modalController.create(StopTimingPage, {
+      //   elapsedTime: elapsedTime
+      // });
+      //
+      // modal.onDidDismiss((modifiedSeconds) => {
+      //
+      //   if (modifiedSeconds > elapsedTime) {
+      //     let difference = modifiedSeconds - elapsedTime;
+      //     this.activitiesService.increaseSeconds(activity, difference);
+      //   } else {
+      //     let difference = elapsedTime - modifiedSeconds;
+      //     this.activitiesService.decreaseSeconds(activity, difference);
+      //   }
+      //
+      // });
+      //
+      // modal.present();
+    }
+  }
+
 }

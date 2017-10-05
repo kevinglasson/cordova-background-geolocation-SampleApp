@@ -51,9 +51,7 @@ export class ActivitiesPage {
         }
       ]
     });
-
     prompt.present();
-
   }
 
   editActivity(activity): void {
@@ -125,7 +123,7 @@ export class ActivitiesPage {
   }
 
   onClickClose() {
-    this.activitiesService.clean();
+    // this.activitiesService.clean();
     this.viewCtrl.dismiss();
   }
 }

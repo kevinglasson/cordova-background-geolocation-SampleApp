@@ -37,6 +37,10 @@ export class Activities {
       this.secondsElapsed = time;
     });
 
+    this.activities.forEach((act) => {
+      console.log('activity name loaded', act.name);
+    });
+
     console.log('DEBUG: Number of activities loaded is: ', this.activities.length);
   }
 
