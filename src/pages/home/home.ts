@@ -11,9 +11,8 @@ import {SettingsPage} from '../settings/settings';
 import {BGService} from '../../lib/BGService';
 import {SettingsService} from '../../lib/SettingsService';
 import {AboutPage} from '../about/about';
-import {ActivitiesPage} from '../activity/activity'
 
-declare var google;
+declare const google;
 
 // Colors
 const COLORS = {
@@ -93,7 +92,6 @@ export class HomePage {
   geofenceHitMarkers: any;
   polyline: any;
   stationaryRadiusCircle: any;
-  geofenceCursor: any;
   locationMarkers: any;
   geofenceMarkers: any;
   lastDirectionChangeLocation: any;
@@ -108,16 +106,6 @@ export class HomePage {
   isResettingOdometer: boolean;
   isMapMenuOpen: boolean;
 
-  // Timekeeping
-  projectActive: boolean;
-  timerInterval: any;
-  isActive: boolean;
-  lastChecked: any;
-  secondsElapsed: any;
-  totalSeconds: any;
-
-
-
   constructor(private navCtrl: NavController,
               private platform: Platform,
               private bgService:BGService,
@@ -128,16 +116,13 @@ export class HomePage {
 
     this.bgService.on('change', this.onBackgroundGeolocationSettingsChanged.bind(this));
     this.bgService.on('start', this.onBackgroundGeolocationStarted.bind(this));
-
     this.settingsService.on('change', this.onSettingsChanged.bind(this));
 
     this.isMainMenuOpen = false;
     this.isMapMenuOpen = false;
     this.isSyncing = false;
     this.isResettingOdometer = false;
-
     this.iconMap = ICON_MAP;
-
     this.geofenceHits = [];
 
     // Initial state
@@ -250,7 +235,7 @@ export class HomePage {
    * Configure BackgroundGeolocation plugin
    */
   configureBackgroundGeolocation() {
-    var bgGeo = this.bgService.getPlugin();
+    let bgGeo = this.bgService.getPlugin();
 
     // Listen to events
     this.onLocation = this.onLocation.bind(this);
@@ -311,40 +296,10 @@ export class HomePage {
     modal.present();
   }
 
-  onClickActivities() {
-    this.bgService.playSound('OPEN');
-    let modal = this.modalController.create(ActivitiesPage, {});
-    modal.present();
-  }
-
   onClickAbout() {
     this.bgService.playSound('OPEN');
     let modal = this.modalController.create(AboutPage, {});
     modal.present();
-  }
-
-  onClickSync() {
-    this.bgService.playSound('BUTTON_CLICK');
-
-    function onComplete(message, result) {
-      this.settingsService.toast(message, result);
-      this.zone.run(() => { this.isSyncing = false; })
-    }
-
-    let bgGeo = this.bgService.getPlugin();
-    bgGeo.getCount((count) => {
-      let message = 'Sync ' + count + ' location' + ((count>1) ? 's' : '') + '?';
-      this.settingsService.confirm('Confirm Sync', message, () => {
-        this.isSyncing = true;
-        bgGeo.sync((rs, taskId) => {
-          this.bgService.playSound('MESSAGE_SENT');
-          bgGeo.finish(taskId);
-          onComplete.call(this, MESSAGE.sync_success, count);
-        }, (error) => {
-          onComplete.call(this, MESSAGE.sync_failure, error);
-        });
-      });
-    });
   }
 
   onClickDestroyLocations() {
@@ -372,25 +327,6 @@ export class HomePage {
           onComplete.call(this, MESSAGE.destroy_locations_failure, error);
         });
       });
-    });
-  }
-
-  onClickResetOdometer() {
-    this.state.odometer = '0.0';
-    this.bgService.playSound('BUTTON_CLICK');
-    let bgGeo = this.bgService.getPlugin();
-    this.isResettingOdometer = true;
-    this.resetMarkers();
-
-    function onComplete(message, result?) {
-      this.settingsService.toast(message, result);
-      this.zone.run(() => { this.isResettingOdometer = false; })
-    }
-
-    bgGeo.resetOdometer((location) => {
-      onComplete.call(this, MESSAGE.reset_odometer_success);
-    }, (error) => {
-      onComplete.call(this, MESSAGE.reset_odometer_failure, error);
     });
   }
 
@@ -464,7 +400,7 @@ export class HomePage {
 
     switch(name) {
       case 'mapHideMarkers':
-        var loader = this.loadingCtrl.create({
+        let loader = this.loadingCtrl.create({
           content: (value) ? MESSAGE.removing_markers : MESSAGE.rendering_markers
         });
         loader.present();
@@ -584,7 +520,7 @@ export class HomePage {
   }
 
   updateCurrentLocationMarker(location) {
-    var latlng = new google.maps.LatLng(location.coords.latitude, location.coords.longitude);
+    let latlng = new google.maps.LatLng(location.coords.latitude, location.coords.longitude);
     this.currentLocationMarker.setPosition(latlng);
     this.locationAccuracyCircle.setCenter(latlng);
     this.locationAccuracyCircle.setRadius(location.coords.accuracy);
@@ -606,18 +542,18 @@ export class HomePage {
   // Build a bread-crumb location marker.
   buildLocationMarker(location, options?) {
     options = options || {};
-    var icon = google.maps.SymbolPath.CIRCLE;
-    var scale = 3;
-    var zIndex = 1;
-    var anchor;
-    var strokeWeight = 1;
+    let icon = google.maps.SymbolPath.CIRCLE;
+    let scale = 3;
+    let zIndex = 1;
+    let anchor;
+    let strokeWeight = 1;
 
     if (!this.lastDirectionChangeLocation) {
       this.lastDirectionChangeLocation = location;
     }
 
     // Render an arrow marker if heading changes by 10 degrees or every 5 points.
-    var deltaHeading = Math.abs(location.coords.heading - this.lastDirectionChangeLocation.coords.heading);
+    let deltaHeading = Math.abs(location.coords.heading - this.lastDirectionChangeLocation.coords.heading);
     if ((deltaHeading >= 15) || !(this.locationMarkers.length % 5) || options.showHeading) {
       icon = google.maps.SymbolPath.FORWARD_CLOSED_ARROW;
       scale = 2;
@@ -662,9 +598,9 @@ export class HomePage {
   }
 
   showStationaryCircle(location:any) {
-    var coords = location.coords;
-    var radius = this.bgService.isLocationTrackingMode() ? 200 : (this.state.geofenceProximityRadius / 2);
-    var center = new google.maps.LatLng(coords.latitude, coords.longitude);
+    let coords = location.coords;
+    let radius = this.bgService.isLocationTrackingMode() ? 200 : (this.state.geofenceProximityRadius / 2);
+    let center = new google.maps.LatLng(coords.latitude, coords.longitude);
 
     this.stationaryRadiusCircle.setRadius(radius);
     this.stationaryRadiusCircle.setCenter(center);
@@ -674,9 +610,9 @@ export class HomePage {
 
   hideStationaryCircle() {
     // Create a little red breadcrumb circle of our last stop-position
-    var latlng = this.stationaryRadiusCircle.getCenter();
-    var stopZone = this.buildStopZoneMarker(latlng);
-    var lastMarker = this.locationMarkers.pop();
+    let latlng = this.stationaryRadiusCircle.getCenter();
+    let stopZone = this.buildStopZoneMarker(latlng);
+    let lastMarker = this.locationMarkers.pop();
     if (lastMarker) {
       lastMarker.setMap(null);
     }
@@ -695,7 +631,6 @@ export class HomePage {
     this.geofenceHitMarkers.forEach((marker) => {
       marker.setMap(null);
     });
-
     this.polyline.setPath([]);
   }
 
@@ -717,10 +652,5 @@ export class HomePage {
 
   alert(title, message) {
 
-  }
-
-  onClickBegin() {
-    console.log('[js] onClickBegin');
-    this.onClickChangePace();
   }
 }

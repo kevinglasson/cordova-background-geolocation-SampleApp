@@ -4,7 +4,7 @@
       <!-- <button ion-button (click)="onClickSettings()" style="font-size:2.3rem"><ion-icon name="arrow-dropup-circle"></ion-icon></button>-->
     </ion-buttons>
     <ion-title mode="ios">
-      R2CC
+      Perkins Ride Tracker
     </ion-title>
     <ion-buttons end>
       <ion-toggle [(ngModel)]="state.enabled" (ionChange)="onToggleEnabled()"
@@ -27,19 +27,6 @@
       <!--Settings link-->
       <button ion-fab (click)="onClickSettings()" color="teal-blue">
         <ion-icon color="dark" name="settings"></ion-icon>
-      </button>
-
-      <!--Activities link-->
-      <button ion-fab (click)="onClickActivities()" color="teal-blue">
-        <ion-icon color="dark" name="folder"></ion-icon>
-      </button>
-
-      <!--Reset the odometer-->
-      <button ion-fab (click)="onClickResetOdometer()" color="teal-blue">
-        <ion-spinner [hidden]="!isResettingOdometer" name="circles"
-                     color="dark"></ion-spinner>
-        <ion-icon color="dark" [hidden]="isResettingOdometer"
-                  name="speedometer"></ion-icon>
       </button>
 
       <!--Get help-->
