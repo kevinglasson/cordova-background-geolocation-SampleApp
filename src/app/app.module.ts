@@ -10,15 +10,11 @@ import { IonicStorageModule } from "@ionic/storage";
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
 import { SettingsPage } from '../pages/settings/settings';
-import { GeofencePage } from '../pages/geofence/geofence';
 import { AboutPage } from '../pages/about/about';
-import { ActivitiesPage } from '../pages/activity/activity';
-import { StopTimingPage } from '../pages/stop-timing/stop-timing';
 
 import { BGService } from '../lib/BGService';
 import { SettingsService } from '../lib/SettingsService';
 import { TestService } from '../lib/TestService';
-import { Activities } from '../providers/activities/activities';
 
 // END KEVIN
 
@@ -30,10 +26,7 @@ import { Activities } from '../providers/activities/activities';
     MyApp,
     HomePage,
     SettingsPage,
-    GeofencePage,
-    AboutPage,
-    ActivitiesPage,
-    StopTimingPage
+    AboutPage
   ],
   imports: [
     HttpModule,
@@ -46,10 +39,7 @@ import { Activities } from '../providers/activities/activities';
     MyApp,
     HomePage,
     SettingsPage,
-    GeofencePage,
-    AboutPage,
-    ActivitiesPage,
-    StopTimingPage
+    AboutPage
   ],
   providers: [
     StatusBar,
@@ -58,8 +48,7 @@ import { Activities } from '../providers/activities/activities';
     {
       provide: ErrorHandler,
       useClass: IonicErrorHandler
-    }, BGService, SettingsService,
-    Activities
+    }, BGService, SettingsService
   ]
 })
 export class AppModule {}

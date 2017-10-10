@@ -114,7 +114,8 @@ const SETTINGS = {
       group: 'http',
       dataType: 'integer',
       inputType: 'select',
-      values: [-1, 5, 10, 50, 100]
+      values: [-1, 5, 10, 50, 100],
+      defaultValue: -1
     },
     {
       name: 'maxRecordsToPersist',
@@ -122,6 +123,7 @@ const SETTINGS = {
       dataType: 'integer',
       inputType: 'select',
       values: [-1, 0, 1, 5, 10],
+      defaultValue: -1
     },
     // Application
     {

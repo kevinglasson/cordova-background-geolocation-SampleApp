@@ -302,6 +302,8 @@ export class HomePage {
     modal.present();
   }
 
+
+
   onClickDestroyLocations() {
     this.bgService.playSound('BUTTON_CLICK');
 
