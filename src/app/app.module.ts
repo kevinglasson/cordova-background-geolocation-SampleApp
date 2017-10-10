@@ -11,6 +11,7 @@ import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
 import { SettingsPage } from '../pages/settings/settings';
 import { AboutPage } from '../pages/about/about';
+import { ToggleWarnPage } from '../pages/toggle-warn/toggle-warn';
 
 import { BGService } from '../lib/BGService';
 import { SettingsService } from '../lib/SettingsService';
@@ -26,7 +27,8 @@ import { TestService } from '../lib/TestService';
     MyApp,
     HomePage,
     SettingsPage,
-    AboutPage
+    AboutPage,
+    ToggleWarnPage
   ],
   imports: [
     HttpModule,
@@ -39,7 +41,8 @@ import { TestService } from '../lib/TestService';
     MyApp,
     HomePage,
     SettingsPage,
-    AboutPage
+    AboutPage,
+    ToggleWarnPage
   ],
   providers: [
     StatusBar,

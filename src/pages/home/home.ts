@@ -11,6 +11,7 @@ import {SettingsPage} from '../settings/settings';
 import {BGService} from '../../lib/BGService';
 import {SettingsService} from '../../lib/SettingsService';
 import {AboutPage} from '../about/about';
+import {ToggleWarnPage} from "../toggle-warn/toggle-warn";
 
 declare const google;
 
@@ -148,6 +149,7 @@ export class HomePage {
     this.platform.ready().then(() => {
       this.configureMap();
       this.configureBackgroundGeolocation();
+      this.loadToggleWarn();
     });
   }
 
@@ -299,6 +301,11 @@ export class HomePage {
   onClickAbout() {
     this.bgService.playSound('OPEN');
     let modal = this.modalController.create(AboutPage, {});
+    modal.present();
+  }
+
+  loadToggleWarn() {
+    let modal = this.modalController.create(ToggleWarnPage, {});
     modal.present();
   }
 
