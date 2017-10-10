@@ -1,6 +1,7 @@
 import {Component, ElementRef, NgZone, ViewChild} from '@angular/core';
 
 import {
+  AlertController,
   LoadingController,
   ModalController,
   NavController,
@@ -113,7 +114,8 @@ export class HomePage {
               private settingsService:SettingsService,
               private zone:NgZone,
               private loadingCtrl: LoadingController,
-              private modalController: ModalController) {
+              private modalController: ModalController,
+              private alertCtrl: AlertController) {
 
     this.bgService.on('change', this.onBackgroundGeolocationSettingsChanged.bind(this));
     this.bgService.on('start', this.onBackgroundGeolocationStarted.bind(this));
@@ -364,9 +366,10 @@ export class HomePage {
     let bgGeo = this.bgService.getPlugin();
     if (this.state.enabled) {
       if (this.bgService.isLocationTrackingMode()) {
-        bgGeo.start(function() {
+        bgGeo.start(() => {
           console.warn('[js] START SUCCESS');
-        }, function(error) {
+          this.doConfirm();
+        }, (error) => {
           console.error('[js] START FAILURE: ', error);
         });
       } else {
@@ -378,9 +381,6 @@ export class HomePage {
       bgGeo.stop();
       this.clearMarkers();
     }
-
-    this.onClickResetOdometer();
-
   }
 
   onClickGetCurrentPosition() {
@@ -683,5 +683,25 @@ export class HomePage {
 
   alert(title, message) {
 
+  }
+
+  doConfirm() {
+    let alert = this.alertCtrl.create({
+      title: 'Reset odometer?',
+        message: 'Would you like to reset the odometer to 0?',
+      buttons: [
+        {
+          text: 'No'
+        },
+        {
+          text: 'Yes',
+          handler: () => {
+            this.onClickResetOdometer();
+          }
+        }
+      ]
+    });
+
+    alert.present();
   }
 }

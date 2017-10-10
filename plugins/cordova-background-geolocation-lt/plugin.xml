@@ -69,7 +69,7 @@
 
      <!-- android -->
     <platform name="android">
-        <preference name="LICENSE" default="YOUR_LICENSE_KEY" />
+        <preference name="LICENSE" default="010305c6120a25e2d904f0e0870846175de48193092ac42548d0e3f805a2b60f" />
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
             <meta-data android:name="com.transistorsoft.locationmanager.license" android:value="$LICENSE" />
         </config-file>

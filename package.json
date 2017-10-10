@@ -1,7 +1,7 @@
 {
     "name": "Perkins Ride Tracker",
     "author": "Kevin Glasson",
-    "homepage": "www.icentralau.com.au",
+    "homepage": "www.cheermeon.com.au",
     "private": true,
     "scripts": {
         "clean": "ionic-app-scripts clean",
@@ -28,7 +28,7 @@
         "cordova": "^7.0.1",
         "cordova-android": "^6.2.3",
         "cordova-background-geolocation-lt": "^2.8.5",
-        "cordova-ios": "^4.5.1",
+        "cordova-ios": "^4.4.0",
         "cordova-plugin-background-fetch": "^5.1.1",
         "cordova-plugin-device": "^1.1.6",
         "cordova-plugin-splashscreen": "^4.0.3",
@@ -76,7 +76,7 @@
             "cordova-plugin-device": {},
             "cordova-sqlite-storage": {},
             "cordova-background-geolocation-lt": {
-                "LICENSE": "YOUR_LICENSE_KEY",
+                "LICENSE": "010305c6120a25e2d904f0e0870846175de48193092ac42548d0e3f805a2b60f",
                 "BACKGROUND_MODE_LOCATION": "<string>location</string>",
                 "LOCATION_ALWAYS_AND_WHEN_IN_USE_USAGE_DESCRIPTION": "ALWAYS USE is required for constant background location-tracking",
                 "LOCATION_ALWAYS_USAGE_DESCRIPTION": "Background location-tracking is required",
