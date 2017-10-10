@@ -309,7 +309,26 @@ export class HomePage {
     modal.present();
   }
 
+  onClickResetOdometer() {
+    this.state.odometer = '0.0';
+    let bgGeo = this.bgService.getPlugin();
+    this.isResettingOdometer = true;
+    this.resetMarkers();
 
+    let zone = this.zone;
+    let settingsService = this.settingsService;
+
+    function onComplete(message, result?) {
+      settingsService.toast(message, result);
+      zone.run(() => { this.isResettingOdometer = false; })
+    }
+
+    bgGeo.resetOdometer((location) => {
+      onComplete.call(this, MESSAGE.reset_odometer_success);
+    }, (error) => {
+      onComplete.call(this, MESSAGE.reset_odometer_failure, error);
+    });
+  }
 
   onClickDestroyLocations() {
     this.bgService.playSound('BUTTON_CLICK');
@@ -359,6 +378,9 @@ export class HomePage {
       bgGeo.stop();
       this.clearMarkers();
     }
+
+    this.onClickResetOdometer();
+
   }
 
   onClickGetCurrentPosition() {
