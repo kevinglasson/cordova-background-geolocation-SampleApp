@@ -203,9 +203,6 @@ export class SettingsPage {
     });
   }
 
-  onUpdateUrl() {
-    this.onChangeValue('url');
-  }
 
   onClickSync() {
     this.bgService.playSound('BUTTON_CLICK');
@@ -230,14 +227,9 @@ export class SettingsPage {
     });
   }
 
-  onUpdateEmail() {
-    this.bgService.playSound('BUTTON_CLICK');
-    let storage = (<any>window).localStorage;
-    storage.setItem('settings:email', this.email);
-  }
-
-
+  ////
   // KEVIN - Trying here... BOOM
+  //
   onUpdateFirstName() {
     this.bgService.playSound('BUTTON_CLICK');
     let storage = (<any>window).localStorage;
@@ -281,18 +273,24 @@ export class SettingsPage {
       };
 
       //TODO: rider ID checking needs to happen here
-      let message = this.firstName + ' ' + this.lastName;
+      let message =
+        `Name: ${this.firstName} ${this.lastName} <br>Rider ID: ${this.riderId}`;
 
       this.settingsService.confirm('Updating', message, () => {
         this.settingsService.post(data, this.state.url)
-          .subscribe(function (response) {
+          .subscribe((response) => {
               console.log("Success " + response);
-              this.notify('Success', 'Updated!');
+              this.notifyWithCallback(
+                'Success',
+                'Updated!',
+                () => {
+                  this.viewCtrl.dismiss();
+                });
             },
-            function (error) {
+            (error) => {
               console.log("Error " + error);
-              this.notify('Error', 'Not updated, check ID is correct');
-
+              this.notify('Error', 'Update failed, please check that \
+                your details are entered correctly.');
             },
             function () {
               console.log("[js] POST Success")
@@ -300,48 +298,25 @@ export class SettingsPage {
       });
     }
   }
-
   // END KEVIN
-
-  onClickEmailLog() {
-    this.bgService.playSound('BUTTON_CLICK');
-
-    if (!this.email) {
-      this.notify('Email logs', 'Please enter an email address');
-      return;
-    }
-
-    this.isEmailingLog = true;
-
-    function onComplete() {
-      this.zone.run(() => {
-        this.isEmailingLog = false;
-      });
-    }
-
-    this.bgService.getPlugin().emailLog(this.email, () => {
-      onComplete.call(this);
-    }, (error) => {
-      onComplete.call(this);
-      this.notify('Email error', error);
-    });
-  }
-
-  onClickDestroyLog() {
-    this.settingsService.confirm('Confirm Destroy', 'Destroy Logs?', () => {
-      this.isDestroyingLog = true;
-      this.bgService.getPlugin().destroyLog(() => {
-        this.isDestroyingLog = false;
-        this.settingsService.toast('Destroyed logs');
-      });
-    });
-  }
 
   notify(title, message) {
     this.alertCtrl.create({
       title: title,
       subTitle: message,
       buttons: ['Dismiss']
+    }).present();
+  }
+
+  notifyWithCallback(title, message, callback) {
+    this.alertCtrl.create({
+      title: title,
+      subTitle: message,
+      buttons: [{
+        text: 'Dismiss',
+        role: 'cancel',
+        handler: callback
+      }]
     }).present();
   }
 
