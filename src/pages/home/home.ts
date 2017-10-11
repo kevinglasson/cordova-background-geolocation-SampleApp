@@ -149,25 +149,52 @@ export class HomePage {
 
   ionViewDidLoad(){
     this.platform.ready().then(() => {
-      this.configureMap();
-      this.configureBackgroundGeolocation();
-      this.loadToggleWarn();
+      // FOR DEBUGGING WHERE I NEED THE APP TO PAUSE SO I CAN OPEN SAFARI EVERY DAMN TIME
+      // this.alertCtrl.create({
+      //   title: 'STOP',
+      //   subTitle: 'In the name of love',
+      //   buttons: [
+      //     {
+      //       text:'Dismiss',
+      //       handler: () => {
+      //         this.initialLoad();
+      //       }
+      //     }
+      //   ]
+      // }).present();
+
+      this.initialLoad();
+
     });
+  }
+
+  initialLoad() {
+
+    this.configureMap();
+    this.configureBackgroundGeolocation();
+    this.loadToggleWarn();
+
+    // Do we need to show the settings screen?
+    let storage = (<any>window).localStorage;
+    let choice = storage.getItem('settings:initialLoad');
+    if (choice !== '1') {
+      this.onClickSettings();
+    }
   }
 
   /**
    * Configure Google Maps
    */
-  configureMap(){
+  configureMap() {
     this.locationMarkers = [];
     this.geofenceMarkers = [];
     this.geofenceHitMarkers = [];
 
-    let latLng = new google.maps.LatLng(-34.9290, 138.6010);
+    let latLng = new google.maps.LatLng(-31.950035, 115.860389);
 
     let mapOptions = {
       center: latLng,
-      zoom: 15,
+      zoom: 14,
       mapTypeId: google.maps.MapTypeId.ROADMAP,
       zoomControl: false,
       mapTypeControl: false,
@@ -277,7 +304,7 @@ export class HomePage {
         if (state.schedule.length > 0) {
           bgGeo.startSchedule();
         }
-        console.log('[js] Confgure success');
+        console.log('[js] Configure success');
       });
     });
   }
@@ -703,5 +730,13 @@ export class HomePage {
     });
 
     alert.present();
+  }
+
+  notify(title, message) {
+    this.alertCtrl.create({
+      title: title,
+      subTitle: message,
+      buttons: ['Dismiss']
+    }).present();
   }
 }

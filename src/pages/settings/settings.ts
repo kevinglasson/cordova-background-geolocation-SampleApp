@@ -105,7 +105,7 @@ export class SettingsPage {
   ionViewDidLoad() {
     // Load email address for email log
     let storage = (<any>window).localStorage;
-    var email = storage.getItem('settings:email');
+    let email = storage.getItem('settings:email');
 
     if (email) {
       this.email = email;
@@ -144,7 +144,7 @@ export class SettingsPage {
   }
 
   onChangeValue(name) {
-    var value = this.state[name];
+    let value = this.state[name];
     console.info('onChangeValue: ', name, value);
 
     if (typeof(value) !== 'undefined') {
@@ -176,7 +176,7 @@ export class SettingsPage {
   }
 
   onChangeSetting(name) {
-    var value = this.settings[name];
+    let value = this.settings[name];
     this.settingsService.set(name, value);
   }
 
@@ -186,7 +186,7 @@ export class SettingsPage {
 
   onClickResetOdometer() {
     this.bgService.playSound('BUTTON_CLICK');
-    var bgGeo = this.bgService.getPlugin();
+    let bgGeo = this.bgService.getPlugin();
     this.isResettingOdometer = true;
 
     function onComplete() {
@@ -208,7 +208,7 @@ export class SettingsPage {
     this.bgService.playSound('BUTTON_CLICK');
     this.isSyncing = true;
 
-    var bgGeo = this.bgService.getPlugin();
+    let bgGeo = this.bgService.getPlugin();
 
     function onComplete() {
       this.zone.run(() => {
@@ -284,6 +284,8 @@ export class SettingsPage {
                 'Success',
                 'Updated!',
                 () => {
+                  let storage = (<any>window).localStorage;
+                  storage.setItem('settings:initialLoad', 1);
                   this.viewCtrl.dismiss();
                 });
             },

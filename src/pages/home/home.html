@@ -29,6 +29,11 @@
         <ion-icon color="dark" name="settings"></ion-icon>
       </button>
 
+      <!--Reset odometer-->
+      <button ion-fab (click)="onClickResetOdometer()" color="teal-blue">
+        <ion-icon color="dark" name="speedometer"></ion-icon>
+      </button>
+
       <!--Get help-->
       <button ion-fab (click)="onClickAbout()" color="teal-blue">
         <ion-icon color="dark" name="help"></ion-icon>
@@ -96,7 +101,7 @@
       <span ion-text class="odometer" color="">{{this.state.odometer}}km</span>
     </ion-title>
     <ion-buttons end>
-      <button ion-button solid
+      <button ion-button solid [disabled]="!state.enabled"
               (click)="onClickChangePace()" style="width:50px"
               color="{{state.isMoving ? 'danger' : 'secondary'}}">
         <ion-spinner [hidden]="!state.isChangingPace" name="dots"
