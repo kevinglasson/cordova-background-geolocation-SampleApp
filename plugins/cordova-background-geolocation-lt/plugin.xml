@@ -22,10 +22,10 @@
 
      <platform name="ios">
         <preference name="BACKGROUND_MODE_LOCATION" default="&lt;string&gt;location&lt;/string&gt;" />
-        <preference name="LOCATION_ALWAYS_AND_WHEN_IN_USE_USAGE_DESCRIPTION" default="ALWAYS USE is required for constant background location-tracking" />
+        <preference name="LOCATION_ALWAYS_AND_WHEN_IN_USE_USAGE_DESCRIPTION" default="[CHANGEME] Always use is required for constant background location-tracking" />
         <preference name="LOCATION_ALWAYS_USAGE_DESCRIPTION" default="Background location-tracking is required" />
-        <preference name="LOCATION_WHEN_IN_USE_USAGE_DESCRIPTION" default="ackground location-tracking is required" />
-        <preference name="MOTION_USAGE_DESCRIPTION" default="Using the accelerometer increases battery-efficiency by intelligently toggling location-tracking only when the device is detected to be moving" />
+        <preference name="LOCATION_WHEN_IN_USE_USAGE_DESCRIPTION" default="[CHANGEME] Background location-tracking is required" />
+        <preference name="MOTION_USAGE_DESCRIPTION" default="[CHANGEME] Using the accelerometer increases battery-efficiency by intelligently toggling location-tracking only when the device is detected to be moving" />
 
         <dependency id="cordova-plugin-cocoalumberjack" version="~0.0.4" />
         <!-- required background modes:  App registers for location updates -->
@@ -69,7 +69,7 @@
 
      <!-- android -->
     <platform name="android">
-        <preference name="LICENSE" default="010305c6120a25e2d904f0e0870846175de48193092ac42548d0e3f805a2b60f" />
+        <preference name="LICENSE" default="YOUR_LICENSE_KEY" />
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
             <meta-data android:name="com.transistorsoft.locationmanager.license" android:value="$LICENSE" />
         </config-file>
