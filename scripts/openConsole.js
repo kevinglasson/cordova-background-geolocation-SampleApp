@@ -1,3 +1,3 @@
 const opn = require('opn');
-opn('http://134.7.246.110/');
+opn('http://cheermeon.com.au/');
 process.exit();

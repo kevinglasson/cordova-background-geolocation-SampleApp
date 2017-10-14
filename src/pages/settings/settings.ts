@@ -50,7 +50,7 @@ export class SettingsPage {
   // KEVIN - me again ^_^
   firstName: string;
   lastName: string;
-  riderId: string;
+  riderID: string;
   uuid: string;
   // END KEVIN
 
@@ -114,7 +114,7 @@ export class SettingsPage {
     // KEVIN
     let firstName = storage.getItem('settings:firstName');
     let lastName = storage.getItem('settings:lastName');
-    let riderId = storage.getItem('settings:riderId');
+    let riderID = storage.getItem('settings:riderID');
 
     if (firstName) {
       this.firstName = firstName;
@@ -122,8 +122,8 @@ export class SettingsPage {
     if (lastName) {
       this.lastName = lastName;
     }
-    if (riderId) {
-      this.riderId = riderId;
+    if (riderID) {
+      this.riderID = riderID;
     }
     // END KEVIN
   }
@@ -244,16 +244,16 @@ export class SettingsPage {
     console.log('Stored: ' + this.lastName);
   }
 
-  onUpdateRiderId() {
+  onUpdateRiderID() {
     this.bgService.playSound('BUTTON_CLICK');
     let storage = (<any>window).localStorage;
-    storage.setItem('settings:riderId', this.riderId);
-    console.log('Stored: ' + this.riderId);
+    storage.setItem('settings:riderID', this.riderID);
+    console.log('Stored: ' + this.riderID);
   }
 
   onClickPostName() {
     // Check if the fields are filled
-    if (!this.firstName || !this.lastName || !this.riderId) {
+    if (!this.firstName || !this.lastName || !this.riderID) {
       this.notify('Error', 'Cannot save, check all fields are filled out');
     } else {
       if (!this.uuid) {
@@ -264,7 +264,7 @@ export class SettingsPage {
       let data = {
         firstName: this.firstName,
         lastName: this.lastName,
-        riderId: this.riderId,
+        riderID: this.riderID,
         type: 'name',
         device: {
           uuid: this.uuid,
@@ -274,7 +274,7 @@ export class SettingsPage {
 
       //TODO: rider ID checking needs to happen here
       let message =
-        `Name: ${this.firstName} ${this.lastName} <br>Rider ID: ${this.riderId}`;
+        `Name: ${this.firstName} ${this.lastName} <br>Rider ID: ${this.riderID}`;
 
       this.settingsService.confirm('Updating', message, () => {
         this.settingsService.post(data, this.state.url)
