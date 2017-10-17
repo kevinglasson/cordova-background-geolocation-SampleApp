@@ -1,20 +1,11 @@
-import {Component, NgZone} from '@angular/core';
-import {
-  AlertController,
-  LoadingController,
-  ModalController,
-  ViewController
-} from "ionic-angular";
+import { Component} from '@angular/core';
+import { AlertController, LoadingController, ModalController, ViewController } from "ionic-angular";
+import { InAppBrowser } from '@ionic-native/in-app-browser';
+import { BGService } from '../../lib/BGService';
+import { SettingsService } from '../../lib/SettingsService';
+import { AboutPage } from '../about/about';
 
-import {BGService} from '../../lib/BGService';
-import {SettingsService} from '../../lib/SettingsService';
-
-import {AboutPage} from '../about/about';
-
-const TRACKING_MODE_OPTIONS = [
-  'location',
-  'geofence'
-];
+const TRACKING_MODE_OPTIONS = ['location', 'geofence'];
 const LOG_LEVEL_OPTIONS = ['OFF', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'VERBOSE'];
 const NOTIFICATION_PRIORITY_OPTIONS = ['DEFAULT', 'HIGH', 'LOW', 'MAX', 'MIN'];
 
@@ -24,39 +15,21 @@ const NOTIFICATION_PRIORITY_OPTIONS = ['DEFAULT', 'HIGH', 'LOW', 'MAX', 'MIN'];
 })
 
 export class SettingsPage {
-  isLoaded: boolean;
   loader: any;
   storage: any;
   alert: any;
   state: any;
-  basicTab: any;
-  listTab: any;
-  selectedSegment: string;
   trackingModeOptions: any;
-  desiredAccuracyOptions: any;
-  distanceFilterOptions: any;
-  autoSyncThresholdOptions: any;
-  geofenceProximityRadiusOptions: any;
-  heartbeatIntervalOptions: any;
   logLevelOptions: any;
-  logMaxDaysOptions: any;
   notificationPriorityOptions: any;
   settings: any;
-  //geofenceOptions: any;
-  //mapOptions: any;
-  email: string;
-
-
-  // KEVIN - me again ^_^
   firstName: string;
   lastName: string;
-  riderID: string;
+  participantID: string;
   uuid: string;
-  // END KEVIN
 
-
+  isLoaded: boolean;
   isSyncing: boolean;
-  isEmailingLog: boolean;
   isDestroyingLog: boolean;
   isAddingGeofences: boolean;
   isResettingOdometer: boolean;
@@ -67,8 +40,9 @@ export class SettingsPage {
               private viewCtrl: ViewController,
               private modalCtrl: ModalController,
               private loadingCtrl: LoadingController,
-              private zone: NgZone) {
-
+              private iab: InAppBrowser
+              )
+  {
     this.isLoaded = false;
     this.loader = this.loadingCtrl.create({
       content: "Loading..."
@@ -103,18 +77,12 @@ export class SettingsPage {
   }
 
   ionViewDidLoad() {
-    // Load email address for email log
+
+    // Load up the stored settings
     let storage = (<any>window).localStorage;
-    let email = storage.getItem('settings:email');
-
-    if (email) {
-      this.email = email;
-    }
-
-    // KEVIN
     let firstName = storage.getItem('settings:firstName');
     let lastName = storage.getItem('settings:lastName');
-    let riderID = storage.getItem('settings:riderID');
+    let participantID = storage.getItem('settings:participantID');
 
     if (firstName) {
       this.firstName = firstName;
@@ -122,10 +90,9 @@ export class SettingsPage {
     if (lastName) {
       this.lastName = lastName;
     }
-    if (riderID) {
-      this.riderID = riderID;
+    if (participantID) {
+      this.participantID = participantID;
     }
-    // END KEVIN
   }
 
   ionViewWillEnter() {
@@ -214,7 +181,7 @@ export class SettingsPage {
       this.zone.run(() => {
         this.isSyncing = false;
       });
-    };
+    }
 
     bgGeo.sync((rs, taskId) => {
       this.bgService.playSound('MESSAGE_SENT');
@@ -227,9 +194,6 @@ export class SettingsPage {
     });
   }
 
-  ////
-  // KEVIN - Trying here... BOOM
-  //
   onUpdateFirstName() {
     this.bgService.playSound('BUTTON_CLICK');
     let storage = (<any>window).localStorage;
@@ -244,16 +208,16 @@ export class SettingsPage {
     console.log('Stored: ' + this.lastName);
   }
 
-  onUpdateRiderID() {
+  onUpdateParticipantID() {
     this.bgService.playSound('BUTTON_CLICK');
     let storage = (<any>window).localStorage;
-    storage.setItem('settings:riderID', this.riderID);
-    console.log('Stored: ' + this.riderID);
+    storage.setItem('settings:participantID', this.participantID);
+    console.log('Stored: ' + this.participantID);
   }
 
   onClickPostName() {
     // Check if the fields are filled
-    if (!this.firstName || !this.lastName || !this.riderID) {
+    if (!this.firstName || !this.lastName || !this.participantID) {
       this.notify('Error', 'Cannot save, check all fields are filled out');
     } else {
       if (!this.uuid) {
@@ -264,7 +228,7 @@ export class SettingsPage {
       let data = {
         firstName: this.firstName,
         lastName: this.lastName,
-        riderID: this.riderID,
+        participantID: this.participantID,
         type: 'name',
         device: {
           uuid: this.uuid,
@@ -272,13 +236,21 @@ export class SettingsPage {
         }
       };
 
-      //TODO: rider ID checking needs to happen here
       let message =
-        `Name: ${this.firstName} ${this.lastName} <br>Rider ID: ${this.riderID}`;
+        `Name: ${this.firstName} ${this.lastName} <br>Participant ID: ${this.participantID}`;
+
+      // Create loader so the user knows something is happening (in case the POST takes a while)
+      let sendingLoader = this.loadingCtrl.create({
+        content: "Sending..."
+      });
 
       this.settingsService.confirm('Updating', message, () => {
-        this.settingsService.post(data, this.state.url)
+        sendingLoader.present();
+        this.settingsService.post(data, 'http://www.cheermeon.com.au/post')
           .subscribe((response) => {
+              // Dismiss the loader
+              sendingLoader.dismiss();
+              // Alert the user on success
               console.log("Success " + response);
               this.notifyWithCallback(
                 'Success',
@@ -290,9 +262,10 @@ export class SettingsPage {
                 });
             },
             (error) => {
+              // Dismiss the loader
+              sendingLoader.dismiss();
               console.log("Error " + error);
-              this.notify('Error', 'Update failed, please check that \
-                your details are entered correctly.');
+              this.idError();
             },
             function () {
               console.log("[js] POST Success")
@@ -300,7 +273,10 @@ export class SettingsPage {
       });
     }
   }
-  // END KEVIN
+
+  launch() {
+    this.iab.create('http://pr17.conquercancer.org.au/site/PageServer?pagename=pr17_login', '_blank');
+  }
 
   notify(title, message) {
     this.alertCtrl.create({
@@ -321,6 +297,34 @@ export class SettingsPage {
       }]
     }).present();
   }
+
+  idError() {
+    let alert = this.alertCtrl.create({
+      title: 'Error',
+      message:
+      'Your <strong>Participant ID</strong> is incorrect. Make sure it is entered like this.' +
+      '<br><br>' +
+      'Participant ID: XXXXXX-X' +
+      '<br><br>' +
+      'Don\'t forget the hyphen \'-\'.' +
+      '<br><br>' +
+      'If you do not know your Participant ID you can find it by logging into the Ride to Conquer Cancer site by clicking <strong>\'Login\'</strong> below',
+      buttons: [
+        {
+          text: 'Login',
+          handler: () => {
+            this.launch();
+          }
+        },
+        {
+          text: 'Dismiss',
+          role: 'cancel'
+        }
+      ]
+    });
+    alert.present();
+  }
+
 
   decodeNotficationPriority(value) {
     switch (value) {

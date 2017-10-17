@@ -13,7 +13,6 @@ if (!fs.existsSync(consoleConfigPath)) {
   const r2ccToken = 'xA^kf#W.(yzm$3#';
   const r2ccUrl = 'http://cheermeon.com.au/post';
   const generatedContent = `
-// KEVIN MADE THIS HAPPEN... I FOUND YOU, SO... NERRR
 exports.defaultLocationUrl = '${r2ccUrl}';
 exports.accessToken = '${r2ccToken}';
   `;

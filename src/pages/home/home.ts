@@ -391,22 +391,43 @@ export class HomePage {
     this.bgService.playSound('BUTTON_CLICK');
 
     let bgGeo = this.bgService.getPlugin();
-    if (this.state.enabled) {
-      if (this.bgService.isLocationTrackingMode()) {
+
+    let storage = (<any>window).localStorage;
+    let initialLoad = storage.getItem('settings:initialLoad');
+
+    // Check that a valid participant ID has been sent at some point according to the app
+    if (initialLoad === '1') {
+      // POST the settings to the server every time we toggle in case we dropped them for some reason i.e. mistakenly deleted
+      this.postSettings();
+      // Start location tracking
+      if (this.state.enabled) {
         bgGeo.start(() => {
           console.warn('[js] START SUCCESS');
           this.doConfirm();
         }, (error) => {
           console.error('[js] START FAILURE: ', error);
         });
+        // Stop location tracking
       } else {
-        bgGeo.startGeofences();
+        this.state.paceIcon = this.iconMap['pace_false'];
+        this.state.isMoving = false;
+        bgGeo.stop();
+        this.clearMarkers();
       }
+      // Display warning if the settings have never been saved
     } else {
-      this.state.paceIcon = this.iconMap['pace_false'];
-      this.state.isMoving = false;
-      bgGeo.stop();
-      this.clearMarkers();
+      if (this.state.enabled) {
+        this.alertCtrl.create({
+          title: 'Error',
+          subTitle: 'A Participant ID is required to use this app, please go to the settings page and add a valid ID.',
+          buttons: [{
+              text: 'Okay',
+              handler: () => {
+                this.state.enabled = false;
+              }
+            }]
+        }).present();
+      }
     }
   }
 
@@ -738,5 +759,42 @@ export class HomePage {
       subTitle: message,
       buttons: ['Dismiss']
     }).present();
+  }
+
+  postSettings() {
+
+    let storage = (<any>window).localStorage;
+    let uuid = storage.getItem('device:uuid');
+    let firstName = storage.getItem('settings:firstName');
+    let lastName = storage.getItem('settings:lastName');
+    let participantID = storage.getItem('settings:participantID');
+
+    let data = {
+      firstName: firstName,
+      lastName: lastName,
+      participantID: participantID,
+      type: 'name',
+      device: {
+        uuid: uuid,
+        accessToken: 'xA^kf#W.(yzm$3#'
+      }
+    };
+
+    this.settingsService.post(data, 'http://www.cheermeon.com.au/post')
+      .subscribe(
+        (response) => {
+          console.log("[js] Response " + response);
+        },
+        (error) => {
+          console.log("[js] Error updating name on toggle" + error);
+        },
+        function () {
+          console.log("[js] POST Success")
+        });
+  }
+
+  shareToFacebook() {
+    let url = 'https://www.facebook.com/dialog/feed?app_id=277758716070536&display=popup&link=http://cheermeon.com.au&quote=%22Support%20me%20in%20the%20Ride%20to%20Conquer%20Cancer%22';
+    window.open(url, '_blank');
   }
 }
