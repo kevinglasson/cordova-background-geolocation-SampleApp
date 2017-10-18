@@ -77,7 +77,6 @@ export class SettingsPage {
   }
 
   ionViewDidLoad() {
-
     // Load up the stored settings
     let storage = (<any>window).localStorage;
     let firstName = storage.getItem('settings:firstName');
@@ -217,7 +216,7 @@ export class SettingsPage {
 
   onClickPostName() {
     // Check if the fields are filled
-    if (!this.firstName || !this.lastName || !this.participantID) {
+    if (!this.firstName || !this.lastName) {
       this.notify('Error', 'Cannot save, check all fields are filled out');
     } else {
       if (!this.uuid) {
@@ -302,13 +301,17 @@ export class SettingsPage {
     let alert = this.alertCtrl.create({
       title: 'Error',
       message:
-      'Your <strong>Participant ID</strong> is incorrect. Make sure it is entered like this.' +
+      'Your <strong>Participant ID</strong> is incorrect. Make sure it is entered like this. Don\'t forget the hyphen \'-\'' +
       '<br><br>' +
       'Participant ID: XXXXXX-X' +
       '<br><br>' +
-      'Don\'t forget the hyphen \'-\'.' +
+      '<strong>If you don\'t know your Participant ID:</strong>' +
       '<br><br>' +
-      'If you do not know your Participant ID you can find it by logging into the Ride to Conquer Cancer site by clicking <strong>\'Login\'</strong> below',
+      'You can find it on your bike!' +
+      '<br>' +
+      '<strong>OR</strong>' +
+      '<br>' +
+      'You can also find it by logging into the Ride to Conquer Cancer site by clicking <strong>\'Login\'</strong> below',
       buttons: [
         {
           text: 'Login',
@@ -324,7 +327,6 @@ export class SettingsPage {
     });
     alert.present();
   }
-
 
   decodeNotficationPriority(value) {
     switch (value) {

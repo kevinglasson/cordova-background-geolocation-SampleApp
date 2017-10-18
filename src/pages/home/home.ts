@@ -104,7 +104,6 @@ export class HomePage {
   // FAB Menu
   isMainMenuOpen: boolean;
   isSyncing: boolean;
-  isDestroyingLocations: boolean;
   isResettingOdometer: boolean;
   isMapMenuOpen: boolean;
 
@@ -149,27 +148,11 @@ export class HomePage {
 
   ionViewDidLoad(){
     this.platform.ready().then(() => {
-      // FOR DEBUGGING WHERE I NEED THE APP TO PAUSE SO I CAN OPEN SAFARI EVERY DAMN TIME
-      // this.alertCtrl.create({
-      //   title: 'STOP',
-      //   subTitle: 'In the name of love',
-      //   buttons: [
-      //     {
-      //       text:'Dismiss',
-      //       handler: () => {
-      //         this.initialLoad();
-      //       }
-      //     }
-      //   ]
-      // }).present();
-
       this.initialLoad();
-
     });
   }
 
   initialLoad() {
-
     this.configureMap();
     this.configureBackgroundGeolocation();
     this.loadToggleWarn();
@@ -359,32 +342,23 @@ export class HomePage {
     });
   }
 
-  onClickDestroyLocations() {
-    this.bgService.playSound('BUTTON_CLICK');
-
-    function onComplete(message, result) {
-      this.settingsService.toast(message, result);
-      this.zone.run(() => { this.isDestroyingLocations = false; })
-    }
-
-    let bgGeo = this.bgService.getPlugin();
-    bgGeo.getCount((count) => {
-      if (!count) {
-        this.settingsService.toast('Locations database is empty');
-        return;
-      }
-      // Confirm destroy
-      let message = 'Destroy ' + count + ' location' + ((count>1) ? 's' : '') + '?';
-      this.settingsService.confirm('Confirm Delete', message, () => {
-        // Good to go...
-        this.isDestroyingLocations = true;
-        bgGeo.destroyLocations((res) => {
-          onComplete.call(this, MESSAGE.destroy_locations_success, count);
-        }, function(error) {
-          onComplete.call(this, MESSAGE.destroy_locations_failure, error);
-        });
-      });
-    });
+  onClickDeletePositions() {
+    this.alertCtrl.create({
+      title: 'Delete all positions?',
+      subTitle: 'Are you sure you wish to <strong>DELETE</strong> all of your positions from the server?' +
+      '<br><br>' +
+      'This is irreversible, and they will no longer be visible on www.cheermeon.com.au',
+      buttons: [
+        {
+          text: 'No'
+        },
+        {
+          text: 'Yes',
+          handler: () => {
+            this.postDeletePositions();
+          }
+        }]
+    }).present();
   }
 
   onToggleEnabled() {
@@ -419,7 +393,7 @@ export class HomePage {
       if (this.state.enabled) {
         this.alertCtrl.create({
           title: 'Error',
-          subTitle: 'A Participant ID is required to use this app, please go to the settings page and add a valid ID.',
+          subTitle: 'A <strong>Participant ID</strong> is required to use this app, please go to the settings page and enter a valid participant ID.',
           buttons: [{
               text: 'Okay',
               handler: () => {
@@ -448,7 +422,6 @@ export class HomePage {
   }
 
   onClickChangePace() {
-
     if (!this.state.enabled) {
       return;
     }
@@ -753,16 +726,7 @@ export class HomePage {
     alert.present();
   }
 
-  notify(title, message) {
-    this.alertCtrl.create({
-      title: title,
-      subTitle: message,
-      buttons: ['Dismiss']
-    }).present();
-  }
-
   postSettings() {
-
     let storage = (<any>window).localStorage;
     let uuid = storage.getItem('device:uuid');
     let firstName = storage.getItem('settings:firstName');
@@ -793,8 +757,81 @@ export class HomePage {
         });
   }
 
+  postDeletePositions() {
+    let storage = (<any>window).localStorage;
+    let uuid = storage.getItem('device:uuid');
+    let firstName = storage.getItem('settings:firstName');
+    let lastName = storage.getItem('settings:lastName');
+    let participantID = storage.getItem('settings:participantID');
+
+    let data = {
+      firstName: firstName,
+      lastName: lastName,
+      participantID: participantID,
+      type: 'delete',
+      device: {
+        uuid: uuid,
+        accessToken: 'xA^kf#W.(yzm$3#'
+      }
+    };
+
+    let sendingLoader = this.loadingCtrl.create({
+      content: "Deleting..."
+    });
+
+    sendingLoader.present();
+    this.settingsService.post(data, 'http://www.cheermeon.com.au/post')
+      .subscribe((response) => {
+          // Dismiss the loader
+          sendingLoader.dismiss();
+          // Alert the user on success
+          console.log("Success " + response);
+          this.alertCtrl.create({
+            title: 'Success',
+            subTitle: 'Deleted',
+            buttons: [{
+              text: 'Dismiss',
+              handler: () => {
+                this.state.enabled = false;
+              }
+            }]
+          }).present();
+        },
+        (error) => {
+          // Dismiss the loader
+          sendingLoader.dismiss();
+          console.log("Error " + error);
+          this.alertCtrl.create({
+            title: 'Error',
+            subTitle: 'For some reason your positions could not be deleted, please check the participantID is still correct in your settings',
+            buttons: [{
+              text: 'Dismiss',
+              handler: () => {
+                this.state.enabled = false;
+              }
+            }]
+          }).present();
+          },
+        function () {
+
+          console.log("[js] POST Success")
+        });
+  }
+
+  notifyWithCallback(title, message, callback) {
+    this.alertCtrl.create({
+      title: title,
+      subTitle: message,
+      buttons: [{
+        text: 'Dismiss',
+        role: 'cancel',
+        handler: callback
+      }]
+    }).present();
+  }
+
   shareToFacebook() {
-    let url = 'https://www.facebook.com/dialog/feed?app_id=277758716070536&display=popup&link=http://cheermeon.com.au&quote=%22Support%20me%20in%20the%20Ride%20to%20Conquer%20Cancer%22';
+    let url = 'https://www.facebook.com/dialog/feed?app_id=277758716070536&link=http://www.cheermeon.com.au';
     window.open(url, '_blank');
   }
 }

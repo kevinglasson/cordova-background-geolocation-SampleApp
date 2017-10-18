@@ -1,7 +1,6 @@
 <ion-header>
-  <ion-navbar color="teal-blue" mode="ios">
+  <ion-toolbar color="teal-blue" mode="ios">
     <ion-buttons start>
-      <!-- <button ion-button (click)="onClickSettings()" style="font-size:2.3rem"><ion-icon name="arrow-dropup-circle"></ion-icon></button>-->
     </ion-buttons>
     <ion-title mode="ios">
       Perkins Ride Tracker
@@ -10,7 +9,7 @@
       <ion-toggle [(ngModel)]="state.enabled" (ionChange)="onToggleEnabled()"
                   color="secondary" style="display:block;"></ion-toggle>
     </ion-buttons>
-  </ion-navbar>
+  </ion-toolbar>
 </ion-header>
 
 <ion-content>
@@ -37,6 +36,11 @@
       <!--Share to FB-->
       <button ion-fab (click)="shareToFacebook()" color="teal-blue">
         <ion-icon color="dark" name="logo-facebook"></ion-icon>
+      </button>
+
+      <!--Delete positions-->
+      <button ion-fab (click)="onClickDeletePositions()" color="teal-blue">
+        <ion-icon color="dark" name="trash"></ion-icon>
       </button>
 
       <!--Get help-->
@@ -82,6 +86,7 @@
   <!--</ion-fab>-->
 
   <div #map id="map"></div>
+
 </ion-content>
 
 <ion-footer>
