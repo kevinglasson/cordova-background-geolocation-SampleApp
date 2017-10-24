@@ -99,7 +99,7 @@ const SETTINGS = {
       dataType: 'integer',
       inputType: 'select',
       values: [0, 5, 10, 25, 50, 100],
-      defaultValue: 0
+      defaultValue: 25
     },
     {
       name: 'batchSync',
@@ -107,7 +107,7 @@ const SETTINGS = {
       dataType: 'boolean',
       inputType: 'toggle',
       values: ['true', 'false'],
-      defaultValue: 'false'
+      defaultValue: 'true'
     },
     {
       name: 'maxBatchSize',
